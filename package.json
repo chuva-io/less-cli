@@ -1,0 +1,57 @@
+{
+  "name": "@chuva.io/less-cli",
+  "version": "1.0.0-beta.4",
+  "description": "`less-cli` is a CLI tool that allows you to deploy your Less projects to AWS while providing several other tools to facilitate your interaction with Less.",
+  "author": "Chuva, LLC",
+  "license": "Apache-2.0",
+  "url": "https://github.com/chuva-io/less-cli.git",
+  "homepage": "https://bit.ly/less-framework",
+  "type": "module",
+  "exports": "./bin/index.js",
+  "bin": {
+    "less-cli": "bin/index.js"
+  },
+  "keywords": [
+    "distributed",
+    "infinite scale",
+    "event-driven",
+    "events",
+    "deploy",
+    "realtime",
+    "fault tolerant",
+    "serverless",
+    "rest api",
+    "websocket",
+    "microservice",
+    "cloud",
+    "infrastructure",
+    "pub/sub",
+    "aws",
+    "python",
+    "javascript",
+    "swift",
+    "go",
+    "c#",
+    "ruby",
+    "less",
+    "less-cli"
+  ],
+  "dependencies": {
+    "adm-zip": "^0.5.10",
+    "axios": "^1.4.0",
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "glob": "^10.3.4",
+    "js-yaml": "^4.1.0",
+    "ora": "^7.0.1",
+    "ws": "^8.13.0"
+  },
+  "main": "bin/index.js",
+  "devDependencies": {},
+  "bugs": {
+    "url": "https://bitbucket.org/chuva-io/less-cli-client/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
