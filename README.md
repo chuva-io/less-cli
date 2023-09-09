@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/@chuva.io%2Fless-cli.svg)](https://badge.fury.io/js/@chuva.io%2Fless-cli)
+
 `less-cli` is a CLI tool that allows you to deploy your Less projects to AWS while providing several other tools to facilitate your interaction with Less.
 
 - [Learn about Less](https://chuva-io.notion.site/Less-44d98337e08a46af934364700da05e3a)
