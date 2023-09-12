@@ -4,6 +4,7 @@ import chalk from 'chalk';
 
 import deploy from '../commands/deploy/index.js';
 import add_template from '../commands/add-template/index.js';
+import create_socket from '../commands/create-socket/index.js';
 
 const program = new Command();
 
@@ -51,6 +52,25 @@ template
                 process.exit(0);
             default:
                 console.log(chalk.redBright('Error:'), 'Invalid template provided.');
+                process.exit(1);
+        }
+    });
+
+const socket = program
+    .command('socket')
+    .description('Manage web sockets.');
+
+socket
+    .command('create <name>')
+    .description('Add new web socket to your project.')
+    .option('-l, --language <language>', 'The programming language to use for the `connect` and `disconnect` handlers. Options are "js".', 'js')
+    .action(async (name, options) => {
+        switch (options.language) {
+            case 'js':
+                create_socket(name);
+                process.exit(0);
+            default:
+                console.log(chalk.redBright('Error:'), 'Invalid language provided.');
                 process.exit(1);
         }
     });
