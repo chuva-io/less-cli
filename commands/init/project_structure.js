@@ -37,7 +37,7 @@ export default async function project_structure() {
 		'src/external_topics',
 		'src/shared',
 		'src/crons',
-		'src/topics/project_created/log',
+		'src/topics/project_created',
 	];
 
 	subdirectories.forEach((subdir) => {
