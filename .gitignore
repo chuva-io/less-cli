@@ -9,3 +9,13 @@ node_modules/
 
 # Log files
 *.log
+
+*-debug.log
+*-error.log
+/.idea
+/.nyc_output
+/dist
+/lib
+/package-lock.json
+/tmp
+oclif.manifest.json

@@ -1,31 +1,28 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import * as fs from 'node:fs';
+import path from 'node:path';
 
-export default function create() {
+export default function create(rootDir) {
   console.log('Creating MongoDB shared JS template...');
-  create_mongodb_client();
+  createMongodbClient(rootDir);
   console.log('\nCreated template successfully.');
   console.log('Remember to export your `MONGO_DB_URI` and `MONGO_DB_NAME` variables.');
 }
 
-const create_mongodb_client = () => {
-  const working_directory = process.cwd();
-  
-  const folder_path = '/src/shared/mongodb_client';
-  const destination_folder = path.join(working_directory, folder_path);
+const createMongodbClient = (rootDir) => {
+  const workingDirectory = process.cwd();
 
-  const script_directory = path.dirname(fileURLToPath(import.meta.url));
-  const template_directory = path.join(script_directory, '..', '..', '..', '/template_code/js/mongodb_js_shared_client');
+  const folderPath = path.join('src', 'shared', 'mongodb_client');
+  const destinationFolder = path.join(workingDirectory, folderPath);
 
-  copyFolderRecursive(template_directory, destination_folder);
+  const templateDirectory = path.join(rootDir, 'src', 'template_code', 'js', 'mongodb_js_shared_client');
+
+  copyFolderRecursive(templateDirectory, destinationFolder);
 };
 
 const copyFolderRecursive = (source, destination) => {
   if (!fs.existsSync(destination)) {
     fs.mkdirSync(destination, { recursive: true });
-  }
-  else {
+  } else {
     console.error(`Unable to create template. \`${destination}\` already exists.`);
     process.exit(1);
   }
@@ -37,8 +34,7 @@ const copyFolderRecursive = (source, destination) => {
 
     if (fs.lstatSync(sourcePath).isDirectory()) {
       copyFolderRecursive(sourcePath, destinationPath);
-    } 
-    else {
+    } else {
       fs.copyFileSync(sourcePath, destinationPath);
     }
 

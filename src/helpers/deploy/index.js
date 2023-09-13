@@ -2,10 +2,11 @@ import AdmZip from 'adm-zip';
 import axios from 'axios';
 import chalk from 'chalk';
 import FormData from 'form-data';
-import fs from 'fs';
+import * as fs from 'node:fs';
 import * as glob from 'glob';
 import ora from 'ora';
-import path from 'path';
+import * as path from 'node:path';
+
 import WebSocket from 'ws';
 import yaml from 'js-yaml';
 
@@ -34,6 +35,7 @@ function loadEnvironmentVariables(configFile) {
       console.error(chalk.redBright(`Environment variable '${key}' must be defined`));
       process.exit(1);
     }
+
     envVars[key] = value;
   }
 
@@ -64,9 +66,9 @@ async function deployProject(projectPath, projectName, envVars) {
   const serverUrl = 'http://ec2-54-220-76-209.eu-west-1.compute.amazonaws.com:3000/v1/deploys';
   const socket = new WebSocket('ws://ec2-54-220-76-209.eu-west-1.compute.amazonaws.com:3000');
 
-  socket.on('open', async () => { });
+  socket.on('open', async () => {});
 
-  socket.on('message', async (data) => {
+  socket.on('message', async data => {
     const message = JSON.parse(data);
 
     if (message.event === 'deploymentStatus') {
@@ -88,16 +90,16 @@ async function deployProject(projectPath, projectName, envVars) {
 
         if (apis?.length) {
           console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright('\t- API URLs'));
-          apis.forEach(api => {
+          for (const api of apis) {
             console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(`\t\t- ${api.api_name}: ${api.url}`));
-          });
+          }
         }
 
         if (websockets?.length) {
           console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright('\t- WEBSOCKET URLs'));
-          websockets.forEach(websocket => {
+          for (const websocket of websockets) {
             console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(`\t\t- ${websocket.api_name}: ${websocket.url}`));
-          });
+          }
         }
 
         socket.close();
@@ -120,7 +122,7 @@ async function deployProject(projectPath, projectName, envVars) {
 
         const headers = {
           Authorization: `Bearer ${process.env.LESS_TOKEN}`,
-          'connection_id': connectionId,
+          connection_id: connectionId,
           ...formData.getHeaders(),
         };
 
