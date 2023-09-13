@@ -4,6 +4,7 @@ import chalk from 'chalk';
 
 import deploy from '../commands/deploy/index.js';
 import add_template from '../commands/add-template/index.js';
+import init_project_structure from '../commands/init/project_structure.js';
 
 const program = new Command();
 
@@ -54,6 +55,11 @@ template
                 process.exit(1);
         }
     });
+
+program
+    .command('init')
+    .description('Create your initial Less project structure.')
+    .action(init_project_structure);
 
 // Parsing the command-line arguments and executing the corresponding actions
 program.parse();
