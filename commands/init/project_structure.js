@@ -54,7 +54,7 @@ export default async function project_structure() {
 	if (!fs.existsSync(configFilePath)) {
 		const configContent = `
 env_vars:
-  - ENV_1
+  - LESS_TOKEN
 `;
 
 		fs.writeFileSync(configFilePath, configContent);
