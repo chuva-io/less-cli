@@ -61,8 +61,8 @@ async function deployProject(projectPath, projectName, envVars) {
 
   await zip.writeZipPromise(tempZipFilename);
 
-  const serverUrl = 'http://ec2-54-220-76-209.eu-west-1.compute.amazonaws.com:3000/v1/deploys';
-  const socket = new WebSocket('ws://ec2-54-220-76-209.eu-west-1.compute.amazonaws.com:3000');
+  const serverUrl = 'https://less-server.chuva.io/v1/deploys';
+  const socket = new WebSocket('wss://less-server.chuva.io');
 
   socket.on('open', async () => { });
 
