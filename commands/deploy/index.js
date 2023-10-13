@@ -21,7 +21,7 @@ function loadEnvironmentVariables(configFile) {
   const config = yaml.load(configFileContent);
 
   if (!config.hasOwnProperty('env_vars')) {
-    console.error(chalk.redBright("Key 'env_vars' not found in the config.less file"));
+    console.error(chalk.redBright("Key 'env_vars' not found in the less.config file"));
     process.exit(1);
   }
 
@@ -45,7 +45,7 @@ async function deployProject(projectPath, projectName, envVars) {
   const tempZipFilename = 'temp_project.zip';
   const zip = new AdmZip();
 
-  const itemsToZip = glob.sync('{src,requirements.txt,yarn.lock,package.lock,config.less,package.json}', {
+  const itemsToZip = glob.sync('{src,requirements.txt,yarn.lock,package.lock,less.config,package.json}', {
     cwd: projectPath,
   });
 
@@ -146,7 +146,7 @@ export default async function deploy(projectName) {
   spinner.start();
   try {
     const currentWorkingDirectory = process.cwd();
-    const configFile = path.join(currentWorkingDirectory, 'config.less');
+    const configFile = path.join(currentWorkingDirectory, 'less.config');
     const envVars = loadEnvironmentVariables(configFile);
 
     await deployProject(currentWorkingDirectory, projectName, envVars);
