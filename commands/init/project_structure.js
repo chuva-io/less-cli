@@ -49,8 +49,8 @@ export default async function project_structure() {
 		}
 	});
 
-	// Create a config.less file
-	const configFilePath = path.join(projectDir, 'config.less');
+	// Create a less.config file
+	const configFilePath = path.join(projectDir, 'less.config');
 	if (!fs.existsSync(configFilePath)) {
 		const configContent = `
 env_vars:
@@ -59,7 +59,7 @@ env_vars:
 
 		fs.writeFileSync(configFilePath, configContent);
 	} else {
-		console.log(chalk.yellow('Warning:'), 'config.less file already exists.');
+		console.log(chalk.yellow('Warning:'), 'less.config file already exists.');
 	}
 
 	// Create a package.json file
