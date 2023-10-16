@@ -45,7 +45,7 @@ async function deployProject(projectPath, projectName, envVars) {
   const tempZipFilename = 'temp_project.zip';
   const zip = new AdmZip();
 
-  const itemsToZip = glob.sync('{src,requirements.txt,yarn.lock,package.lock,less.config,package.json}', {
+  const itemsToZip = glob.sync('{less,requirements.txt,yarn.lock,package.lock,less.config,package.json}', {
     cwd: projectPath,
   });
 
