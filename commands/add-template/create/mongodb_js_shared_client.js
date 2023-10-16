@@ -12,7 +12,7 @@ export default function create() {
 const create_mongodb_client = () => {
   const working_directory = process.cwd();
   
-  const folder_path = '/src/shared/mongodb_client';
+  const folder_path = '/less/shared/mongodb_client';
   const destination_folder = path.join(working_directory, folder_path);
 
   const script_directory = path.dirname(fileURLToPath(import.meta.url));

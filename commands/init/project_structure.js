@@ -32,12 +32,12 @@ export default async function project_structure() {
 
 	// Create the necessary subdirectories
 	const subdirectories = [
-		'src/apis/demo/messages',
-		'src/sockets',
-		'src/external_topics',
-		'src/shared',
-		'src/crons',
-		'src/topics/project_created',
+		'less/apis/demo/messages',
+		'less/sockets',
+		'less/external_topics',
+		'less/shared',
+		'less/crons',
+		'less/topics/project_created',
 	];
 
 	subdirectories.forEach((subdir) => {
@@ -82,8 +82,8 @@ env_vars:
 		console.log(chalk.yellow('Warning:'), 'package.json file already exists.');
 	}
 
-	// Create src/apis/demo/messages/index.js
-	const messagesIndexPath = path.join(projectDir, 'src', 'apis', 'demo', 'messages', 'index.js');
+	// Create less/apis/demo/messages/index.js
+	const messagesIndexPath = path.join(projectDir, 'less', 'apis', 'demo', 'messages', 'index.js');
 	if (!fs.existsSync(messagesIndexPath)) {
 		const messagesIndexContent = `
 const { route } = require('@chuva.io/less');
@@ -102,7 +102,7 @@ module.exports = {
 
 		fs.writeFileSync(messagesIndexPath, messagesIndexContent);
 	} else {
-		console.log(chalk.yellow('Warning:'), 'src/apis/demo/messages/index.js file already exists.');
+		console.log(chalk.yellow('Warning:'), 'less/apis/demo/messages/index.js file already exists.');
 	}
 
 	console.log(chalk.green('Success:'), 'Project initialization complete.');
