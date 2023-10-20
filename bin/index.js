@@ -6,6 +6,7 @@ import deploy from '../commands/deploy/index.js';
 import add_template from '../commands/add-template/index.js';
 import init_project_structure from '../commands/init/project_structure.js';
 import get_all from '../commands/projects/get_all.js';
+import get_by_id from '../commands/projects/get_by_id.js';
 
 const program = new Command();
 
@@ -37,6 +38,9 @@ program
     .command('list')
     .description('List all projects.')
     .action(get_all)
+    .command('resources <project_id>')
+    .description('List resources by project_id')
+    .action(get_by_id);
 
 const template = program
     .command('template')
