@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import deploy from '../commands/deploy/index.js';
 import add_template from '../commands/add-template/index.js';
 import init_project_structure from '../commands/init/project_structure.js';
+import get_all from '../commands/projects/get_all.js';
 
 const program = new Command();
 
@@ -31,6 +32,11 @@ program
 
         deploy(project_name)
     });
+
+program
+    .command('list')
+    .description('List all projects.')
+    .action(get_all)
 
 const template = program
     .command('template')
