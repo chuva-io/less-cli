@@ -15,7 +15,7 @@ const program = new Command();
 program
     .name('less-cli')
     .description('CLI to interact with Less')
-    .version('0.0.1')
+    .version('1.0.0-beta.12')
     .usage('[COMMAND]');
 
 program
