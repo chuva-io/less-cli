@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 
 import deploy from '../commands/deploy/index.js';
+import deploy_static from '../commands/deploy_static/index.js';
 import add_template from '../commands/add-template/index.js';
 import init_project_structure from '../commands/init/project_structure.js';
 import get_all from '../commands/projects/get_all.js';
@@ -20,18 +21,24 @@ program
 program
     .command('deploy <project_name>')
     .description('Deploy your less project.')
-    .action((project_name) => {
-        if (!/^[a-zA-Z][-a-zA-Z0-9]*$/.test(project_name)) {
-            console.log(chalk.redBright('Error:'), 'The project_name must satisfy regular expression pattern: [a-zA-Z][-a-zA-Z0-9]');
-            process.exit(1);
-        }
-
+    .option('--static', 'Deploy your less static websites')
+    .action((project_name, options) => {
         if (!process.env.LESS_TOKEN) {
             console.log(chalk.redBright('Error:'), 'Environment variable LESS_TOKEN must be defined');
             process.exit(1);
         }
 
-        deploy(project_name)
+        if (!/^[a-z][-a-z0-9]*$/.test(project_name)) {
+            console.log(chalk.redBright('Error:'), 'The project_name must satisfy regular expression pattern: [a-z][-a-z0-9]');
+            process.exit(1);
+        }
+
+        if (options.static) {
+            deploy_static(project_name);
+            return;
+        };
+
+        deploy(project_name);
     });
 
 program
