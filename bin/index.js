@@ -8,6 +8,7 @@ import add_template from '../commands/add-template/index.js';
 import init_project_structure from '../commands/init/project_structure.js';
 import get_all from '../commands/projects/get_all.js';
 import get_by_id from '../commands/projects/get_by_id.js';
+import create_account from '../commands/user/create_account.js';
 
 const program = new Command();
 
@@ -49,10 +50,15 @@ program
     .description('List resources by project_id')
     .action(get_by_id);
 
+program
+    .command('register')
+    .description('Create your less account')
+    .action(create_account);
+
 const template = program
     .command('template')
     .description('Use templates to help you get your boilerplate code set up for common tasks.');
-    
+
 template
     .command('add')
     .description('Add a template to your project.')
