@@ -1,18 +1,17 @@
 import axios from 'axios';
 import chalk from 'chalk';
 import config from '../../utils/config.js';
+import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
 
 export default async function get_all() {
-    if (!process.env.LESS_TOKEN) {
-        console.log(chalk.redBright('Error:'), 'Environment variable LESS_TOKEN must be defined');
-        process.exit(1);
-    }
+    await verify_auth_token();
 
     const serverUrl = `${config.SERVER_URL}/v1/projects`;
 
     try {
+        const LESS_TOKEN = await get_less_token();
         const headers = {
-            Authorization: `Bearer ${process.env.LESS_TOKEN}`
+            Authorization: `Bearer ${LESS_TOKEN}`
         };
 
         const response = await axios.get(serverUrl, { headers });
@@ -28,7 +27,7 @@ export default async function get_all() {
         }
         process.exit(0);
     } catch (error) {
-        console.error(chalk.redBright('Error:'), error?.response?.data || 'Get projects failed');
+        console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Get projects failed');
         process.exit(1);
     }
 }

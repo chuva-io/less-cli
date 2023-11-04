@@ -9,6 +9,8 @@ import init_project_structure from '../commands/init/project_structure.js';
 import get_all from '../commands/projects/get_all.js';
 import get_by_id from '../commands/projects/get_by_id.js';
 import create_account from '../commands/user/create_account.js';
+import create_session from '../commands/user/create_session.js';
+import { verify_auth_token } from '../commands/helpers/credentials.js';
 
 const program = new Command();
 
@@ -23,11 +25,8 @@ program
     .command('deploy <project_name>')
     .description('Deploy your less project.')
     .option('--static', 'Deploy your less static websites')
-    .action((project_name, options) => {
-        if (!process.env.LESS_TOKEN) {
-            console.log(chalk.redBright('Error:'), 'Environment variable LESS_TOKEN must be defined');
-            process.exit(1);
-        }
+    .action(async (project_name, options) => {
+        verify_auth_token();
 
         if (!/^[a-z][-a-z0-9]*$/.test(project_name)) {
             console.log(chalk.redBright('Error:'), 'The project_name must satisfy regular expression pattern: [a-z][-a-z0-9]');
@@ -54,6 +53,13 @@ program
     .command('register')
     .description('Create your less account')
     .action(create_account);
+
+program
+    .command('login')
+    .description('Log in with email and password.')
+    .option('-u, --user <email>', 'User email address')
+    .option('-p, --password <password>', 'User password', '*')
+    .action(create_session);
 
 const template = program
     .command('template')

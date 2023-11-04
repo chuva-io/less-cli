@@ -9,6 +9,8 @@ import path from 'path';
 import WebSocket from 'ws';
 import yaml from 'js-yaml';
 
+import { get_less_token } from '../helpers/credentials.js';
+
 const spinner = ora({ text: '' });
 
 function loadEnvironmentVariables(configFile) {
@@ -31,7 +33,7 @@ function loadEnvironmentVariables(configFile) {
   for (const key of keys) {
     const value = process.env[key];
     if (value === undefined) {
-      console.error(chalk.redBright(`Environment variable '${key}' must be defined`));
+      console.error(chalk.redBright(`\nEnvironment variable '${key}' must be defined`));
       process.exit(1);
     }
     envVars[key] = value;
@@ -118,8 +120,10 @@ async function deployProject(projectPath, projectName, envVars) {
         formData.append('env_vars', JSON.stringify(envVars));
         formData.append('project_name', JSON.stringify(projectName));
 
+        const LESS_TOKEN = await get_less_token();
+
         const headers = {
-          Authorization: `Bearer ${process.env.LESS_TOKEN}`,
+          Authorization: `Bearer ${LESS_TOKEN}`,
           'connection_id': connectionId,
           ...formData.getHeaders(),
         };
@@ -131,7 +135,7 @@ async function deployProject(projectPath, projectName, envVars) {
         }
       } catch (error) {
         spinner.stop();
-        console.error(chalk.redBright('Error:'), error?.response?.data || 'Deployment failed');
+        console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Deployment failed');
         socket.close();
         process.exit(1); // Non-success exit code for failure
       } finally {
