@@ -8,6 +8,9 @@ import ora from 'ora';
 import path from 'path';
 import WebSocket from 'ws';
 
+import { get_less_token } from '../helpers/credentials.js';
+
+
 const spinner = ora({ text: '' });
 
 const CLI_PREFIX = '[less-cli]';
@@ -83,8 +86,10 @@ async function deployProject(projectPath, projectName, envVars) {
         formData.append('env_vars', JSON.stringify(envVars));
         formData.append('project_name', JSON.stringify(projectName));
 
+        const LESS_TOKEN = await get_less_token();
+
         const headers = {
-          Authorization: `Bearer ${process.env.LESS_TOKEN}`,
+          Authorization: `Bearer ${LESS_TOKEN}`,
           'connection_id': connectionId,
           ...formData.getHeaders(),
         };
