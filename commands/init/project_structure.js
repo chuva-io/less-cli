@@ -82,27 +82,25 @@ env_vars:
 		console.log(chalk.yellow('Warning:'), 'package.json file already exists.');
 	}
 
-	// Create less/apis/demo/messages/index.js
-	const messagesIndexPath = path.join(projectDir, 'less', 'apis', 'demo', 'messages', 'index.js');
-	if (!fs.existsSync(messagesIndexPath)) {
-		const messagesIndexContent = `
-const { route } = require('@chuva.io/less');
-
+	// Create less/apis/demo/messages/get.js
+	const messagesGetPath = path.join(projectDir, 'less', 'apis', 'demo', 'messages', 'get.js');
+	if (!fs.existsSync(messagesGetPath)) {
+		const messagesGetContent = `
 module.exports = {
-    get: route(async (req, res) => {
+	process: async (request, response) => {
 
-        res.body = JSON.stringify({ 
-            message: "Hello from Less demo!"
-        });
-        res.statusCode = 200;
-        return res;
-    }, [])
+		response.body = JSON.stringify({ 
+			message: "Hello from Less demo!"
+		});
+		response.statusCode = 200;
+		return response;
+	}
 }
 `;
 
-		fs.writeFileSync(messagesIndexPath, messagesIndexContent);
+		fs.writeFileSync(messagesGetPath, messagesGetContent);
 	} else {
-		console.log(chalk.yellow('Warning:'), 'less/apis/demo/messages/index.js file already exists.');
+		console.log(chalk.yellow('Warning:'), 'less/apis/demo/messages/get.js file already exists.');
 	}
 
 	console.log(chalk.green('Success:'), 'Project initialization complete.');
