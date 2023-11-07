@@ -1,6 +1,6 @@
 {
   "name": "@chuva.io/less-cli",
-  "version": "1.0.0-beta.14",
+  "version": "1.0.0-beta.15",
   "description": "`less-cli` is a CLI tool that allows you to deploy your Less projects to AWS while providing several other tools to facilitate your interaction with Less.",
   "author": "Chuva, LLC",
   "license": "Apache-2.0",
