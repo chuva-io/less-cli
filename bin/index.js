@@ -11,6 +11,7 @@ import get_by_id from '../commands/projects/get_by_id.js';
 import create_account from '../commands/user/create_account.js';
 import create_session from '../commands/user/create_session.js';
 import { verify_auth_token } from '../commands/helpers/credentials.js';
+import create_custom_domain from '../commands/create_custom_domain/index.js';
 
 const program = new Command();
 
@@ -39,6 +40,53 @@ program
         };
 
         deploy(project_name);
+    });
+
+program
+    .command('domains')
+    .description('Use custom domains')
+    .option('--project-name <projectName>', 'Name of your project')
+    .option('--static-name <staticName>', 'Name of your static folder')
+    .option('--custom-domain <customDomain>', 'Your custom domain')
+    .action((_, options) => {
+        verify_auth_token();
+
+        const { 
+            projectName,
+            staticName,
+            customDomain
+        } = options._optionValues;
+
+        if (
+            !projectName ||
+            !/^[a-z][-a-z0-9]*$/.test(projectName) 
+        ) {
+            console.log(chalk.redBright('Error:'), 'The projectName must satisfy regular expression pattern: [a-z][-a-z0-9]');
+            process.exit(1);
+        }
+
+        if (
+            !staticName ||
+            !/^[a-z][-a-z0-9]*$/.test(staticName)
+        ) {
+            console.log(chalk.redBright('Error:'), 'The staticName must satisfy regular expression pattern: [a-z][-a-z0-9]');
+            process.exit(1);
+        }
+
+        if (
+            !customDomain ||
+            !/^(?!https?:\/\/)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(customDomain)
+        ) {
+            console.log(chalk.redBright('Error:'), 'The customDomain must satisfy regular expression pattern: (?!https?:\/\/)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+            console.log(chalk.redBright('Error:'), 'Example: example.com, subdomain.example.com, sub.subdomain.example.com');
+            process.exit(1);
+        }
+
+        create_custom_domain({
+            projectName,
+            staticName,
+            customDomain
+        });
     });
 
 program
