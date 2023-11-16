@@ -13,22 +13,53 @@ import { get_less_token } from '../helpers/credentials.js';
 
 const spinner = ora({ text: '' });
 
-function loadEnvironmentVariables(configFile) {
+function loadEnvironmentVariables(configFile, cronsPath) {
   if (!fs.existsSync(configFile)) {
-    console.error(chalk.redBright(`Config file not found: ${configFile}`));
-    process.exit(1);
+    if (fs.existsSync(cronsPath)) {
+      const files = fs.readdirSync(cronsPath);
+      const dirs = files.filter((file) =>
+        fs.statSync(path.join(cronsPath, file)).isDirectory(),
+      );
+  
+      if (dirs?.length) {
+        const missingEnvVars = dirs
+          .map(
+            (dir) =>
+              `CRON_${dir
+                .replace(/[A-Z]/g, (match) => `_${match}`)
+                .toUpperCase()}`,
+          )
+          .join("\n  ");
+  
+        console.error(
+          chalk.redBright(
+            `\nMust create the less.config file and define the follow environment variables on 'env_vars':\n  ${missingEnvVars}`,
+          ),
+        );
+        process.exit(1);
+      }
+    }
+  
+    return {};
   }
+  
 
   const configFileContent = fs.readFileSync(configFile, 'utf8');
   const config = yaml.load(configFileContent);
 
-  if (!config.hasOwnProperty('env_vars')) {
-    console.error(chalk.redBright("Key 'env_vars' not found in the less.config file"));
+  if (!config?.hasOwnProperty('env_vars')) {
+    console.error(chalk.redBright("\nKey 'env_vars' not found in the less.config file"));
     process.exit(1);
   }
 
   const keys = config.env_vars;
   const envVars = {};
+
+  // Verifying if the less config file has env vars
+  if (!keys || !keys?.length) {
+    console.error(chalk.redBright(`\nEnvironment variables must be defined in 'env_vars' on less.config file`));
+    process.exit(1); 
+  }
 
   for (const key of keys) {
     const value = process.env[key];
@@ -151,7 +182,8 @@ export default async function deploy(projectName) {
   try {
     const currentWorkingDirectory = process.cwd();
     const configFile = path.join(currentWorkingDirectory, 'less.config');
-    const envVars = loadEnvironmentVariables(configFile);
+    const cronsDir = path.join(currentWorkingDirectory, 'less', 'crons');
+    const envVars = loadEnvironmentVariables(configFile, cronsDir);
 
     await deployProject(currentWorkingDirectory, projectName, envVars);
   } catch (error) {
