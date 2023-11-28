@@ -12,6 +12,7 @@ import create_account from '../commands/user/create_account.js';
 import create_session from '../commands/user/create_session.js';
 import { verify_auth_token } from '../commands/helpers/credentials.js';
 import create_custom_domain from '../commands/create_custom_domain/index.js';
+import fetch_and_log_function_logs from '../commands/projects/logs/fetch_and_log_function_logs.js';
 
 const program = new Command();
 
@@ -96,6 +97,13 @@ program
     .command('resources <project_id>')
     .description('List resources by project_id')
     .action(get_by_id);
+
+program
+    .command('log')
+    .description('List logs by project. Example usage: less-cli log --project hello-api --path apis/demo/hello/get')
+    .option('--project <projectName>', 'Specify the name of your project for which you want to list the logs')
+    .option('--path <functionPath>', 'Specify the path of the function for which you want to log')
+    .action(fetch_and_log_function_logs);
 
 program
     .command('register')
