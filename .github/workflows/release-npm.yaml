@@ -1,0 +1,33 @@
+name: Deploy to NPM
+
+on:
+  release:
+    types: [created]
+
+permissions:  
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: main
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Set git user
+      run: |
+        git config --local user.email "less-ci@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Run release script
+      run: ./scripts/release/release.sh
+      env:
+        NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+        VERSION: ${{ github.event.release.tag_name }}
