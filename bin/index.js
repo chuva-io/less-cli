@@ -15,6 +15,7 @@ import create_session from '../commands/user/create_session.js';
 import { verify_auth_token } from '../commands/helpers/credentials.js';
 import create_custom_domain from '../commands/create_custom_domain/index.js';
 import fetch_and_log_function_logs from '../commands/projects/logs/fetch_and_log_function_logs.js';
+import delete_project from '../commands/projects/delete.js';
 
 const program = new Command();
 
@@ -123,6 +124,11 @@ program
     .option('-u, --user <email>', 'User email address')
     .option('-p, --password <password>', 'User password', '*')
     .action(create_session);
+
+program
+    .command('delete <project_name>')
+    .description('Delete your project. Example usage: less-cli delete hello-api')
+    .action(delete_project);
 
 const template = program
     .command('template')
