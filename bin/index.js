@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import path from 'path';
+import fs from 'fs';
 import { Command } from 'commander';
 import chalk from 'chalk';
 
@@ -16,11 +18,16 @@ import fetch_and_log_function_logs from '../commands/projects/logs/fetch_and_log
 
 const program = new Command();
 
+// Get package.json version
+const packagePath = path.join(process.cwd(), 'package.json');
+const packageContent = JSON.parse(fs.readFileSync(packagePath).toString());
+const version = packageContent?.version;
+
 // Setting the name and description of the CLI tool
 program
     .name('less-cli')
     .description('CLI to interact with Less')
-    .version('1.0.0-beta.18')
+    .version(version)
     .usage('[COMMAND]');
 
 program
