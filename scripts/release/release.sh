@@ -1,38 +1,53 @@
 #!/bin/bash
 
-# Remove 'v' prefix from VERSION if it exists
-VERSION=${VERSION#v}
-
-# The script builds the package and publishes it to npm.
-#
-# It's the entry point for the release process.
-
 set -e
 
-# A pre-release is a version with a label i.e. v2.0.0-alpha.1
-if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-.+$ ]]
-then
-  IS_PRE_RELEASE=true
-else
-  IS_PRE_RELEASE=false
-fi
+# Function to log messages
+log() {
+  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $@"
+}
 
-# Write version & commit package.json
-./scripts/release/writeVersion.js
-git add package.json
-git commit -m "Bump build version $VERSION"
-git tag -a "$VERSION" -m "$VERSION"
-git push
+# Get version before merge
+OLD_VERSION=$(git describe --tags $(git rev-list --tags --max-count=1))
+OLD_VERSION=${OLD_VERSION#v} # Remove 'v' prefix if it exists
+log "Old version: $OLD_VERSION"
 
-# Set authentication details
-echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-cd "$PACKAGE_PATH" || exit 1
-if [ "$IS_PRE_RELEASE" = true ]
-then
-  yarn
-  yarn publish --tag next --access=public
+# Get version after merge
+NEW_VERSION=$(node -p "require('./package.json').version")
+log "New version: $NEW_VERSION"
+
+# Compare versions and publish if they are different
+if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
+  log "Version changed from $OLD_VERSION to $NEW_VERSION. Publishing new version to npm..."
+
+  # Set authentication details
+  echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+
+  # Publish to npm
+  if [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-.+$ ]]; then
+    yarn
+    yarn publish --tag next --access=public
+  else
+    yarn
+    yarn publish --access=public
+  fi
+
+  # Create a new tag and release on GitHub
+  git fetch --tags
+  git tag -a "v$NEW_VERSION" -m "Release $NEW_VERSION"
+  git push origin "v$NEW_VERSION"
+
+  # Generate release notes from git commits
+  RELEASE_NOTES=$(git log --pretty=format:"* %s" "v$OLD_VERSION".."v$NEW_VERSION")
+  echo "Release Notes for $NEW_VERSION:" > RELEASE_NOTES.md
+  echo "$RELEASE_NOTES" >> RELEASE_NOTES.md
+
+  # Ensure GITHUB_TOKEN is used for authentication
+  export GITHUB_TOKEN=$GH_TOKEN
+
+  # Create the release using GitHub CLI
+  gh release create "v$NEW_VERSION" --title "Release $NEW_VERSION" --notes-file RELEASE_NOTES.md
+
 else
-  yarn
-  yarn publish --access=public
+  log "Version did not change."
 fi
-cd - || exit

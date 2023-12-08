@@ -1,33 +1,37 @@
 name: Deploy to NPM
 
 on:
-  release:
-    types: [created]
+  pull_request:
+    types: [closed]
+    branches:
+      - main
 
 permissions:  
   contents: write
 
 jobs:
-  build:
+  publish:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        ref: main
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '16.x'
-        registry-url: 'https://registry.npmjs.org'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
 
-    - name: Set git user
-      run: |
-        git config --local user.email "less-ci@github.com"
-        git config --local user.name "GitHub Action"
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
 
-    - name: Run release script
-      run: ./scripts/release/release.sh
-      env:
-        NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-        VERSION: ${{ github.event.release.tag_name }}
+      - name: Set git user
+        run: |
+          git config --local user.email "less-ci@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Execute Publish Script
+        run: ./scripts/release/publish.sh
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
