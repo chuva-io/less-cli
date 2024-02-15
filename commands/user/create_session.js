@@ -1,9 +1,10 @@
 import inquirer from 'inquirer';
-import chalk from 'chalk';
-import api from '../service/api.js'
+
+import api from '../../service/api.js'
 import { 
     set_credentials, 
-} from '../helpers/credentials.js';
+} from '../../utils/credentials.js';
+import { logError, logInfo } from '../../utils/logger.js';
 
 const questions = [
   {
@@ -27,22 +28,23 @@ const questions = [
 
 async function login(user) {
   try {
-    const response = await api.post('v1/sessions', user);
+    const response = await api.post('/v1/sessions', user);
 
     if (response.status === 201) {
         await set_credentials({ 
             LESS_TOKEN: response.data.token 
         });
-
-        console.log(chalk.yellowBright('[less-cli]'), chalk.green('Login successful! Your LESS_TOKEN has been exported to your environment.'));
+        logInfo('Login successful! Your LESS_TOKEN has been exported to your environment.');
+        process.exit(0);
     }
 
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      console.log(chalk.redBright('Error:'), error.response.data.error);
+      logError(error.response.data.error);
     } else {
-      console.error(chalk.redBright('Error:'), error.message || 'An error occurred');
+      logError(error.message || 'An error occurred');
     }
+    process.exit(1);
   }
 }
 

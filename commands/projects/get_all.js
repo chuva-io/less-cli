@@ -1,33 +1,27 @@
-import axios from 'axios';
 import chalk from 'chalk';
-import config from '../../utils/config.js';
-import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
+import { authorizedGet } from '../../service/authorizedRequests.js';
+import { getOrganizationId } from '../../utils/getOrganizationId.js';
+import { logError, logSuccess } from '../../utils/logger.js';
 
-export default async function get_all() {
-    await verify_auth_token();
-
-    const serverUrl = `${config.SERVER_URL}/v1/projects`;
+export default async function get_all({ organization }) {
+    const organizationId = await getOrganizationId(organization);
 
     try {
-        const LESS_TOKEN = await get_less_token();
-        const headers = {
-            Authorization: `Bearer ${LESS_TOKEN}`
-        };
-
-        const response = await axios.get(serverUrl, { headers });
+        const response = await authorizedGet({ 
+            url: `/v1/organizations/${organizationId}/projects` 
+        });
 
         if (response.status === 200) {
             response.data.forEach(item => {
-                console.log(chalk.bold.greenBright('ID:'), chalk.cyanBright(item.id));
-                console.log(chalk.bold.greenBright('Created At:'), chalk.cyanBright(item.created_at));
-                console.log(chalk.bold.greenBright('Updated At:'), chalk.cyanBright(item.updated_at));
-                item.error && console.log(chalk.bold.redBright('Error:'), chalk.cyanBright(item.error));
-                console.log('');
+                logSuccess(`ID: ${chalk.cyanBright(item.id)}`);
+                logSuccess(`Created At: ${chalk.cyanBright(item.created_at)}`);
+                logSuccess(`Updated At: ${chalk.cyanBright(item.updated_at)}`);
+                item.error && logError(`${item.error}\n`);
             });
         }
         process.exit(0);
     } catch (error) {
-        console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Get projects failed');
+        logError(error?.response?.data?.error || 'Get projects failed');
         process.exit(1);
     }
 }
