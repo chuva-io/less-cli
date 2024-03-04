@@ -10,6 +10,7 @@ import WebSocket from 'ws';
 import yaml from 'js-yaml';
 
 import { get_less_token } from '../helpers/credentials.js';
+import check_socket_connect_disconnect_processors from '../../utils/check_socket_connect_disconnect_processors.js';
 
 const spinner = ora({ text: '' });
 
@@ -181,6 +182,10 @@ export default async function deploy(projectName) {
   spinner.start();
   try {
     const currentWorkingDirectory = process.cwd();
+    await check_socket_connect_disconnect_processors(
+      path.join(currentWorkingDirectory, 'less', 'sockets')
+    );
+  
     const configFile = path.join(currentWorkingDirectory, 'less.config');
     const cronsDir = path.join(currentWorkingDirectory, 'less', 'crons');
     const envVars = loadEnvironmentVariables(configFile, cronsDir);
