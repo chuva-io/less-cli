@@ -45,18 +45,27 @@ $ less-cli login
 [less-cli] Login successful! Your LESS_TOKEN has been exported to your environment.
 ```
 
-## `deploy`
+## `projects`
+Manage your Less projects.
+
+### `deploy`
 
 The `deploy` command allow you to deploy your Less project to AWS.
 
 ```bash
-$ less-cli deploy <projectName>
+$ less-cli projects deploy -o <organizationId> -n <projectName>
 ```
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-n, --name <projectName>`: The name of your Less project (required)
+
+*Note: Supports alphanumeric characters and "-".*
 
 #### Example:
 
 ```bash
-$ less-cli deploy my-application
+$ less-cli deploy -o org123 -n my-application
 
 [less] Building... ⚙️
 [less] Build complete ✅
@@ -71,48 +80,20 @@ $ less-cli deploy my-application
 [less] 🇨🇻
 ```
 
-### Parameters
-
-`<projectName>`
-The name of your Less project.
-
-*Note: Supports alphanumeric characters and "-".*
-
-### Options
-
-` --static <static-website-name>`
-
-Less also allow you to deploy your static websites, with the option `--static` that proceedes the `deploy` command.
-
-```bash
-$ less-cli deploy --static <static-website-name>
-```
-
-#### Example:
-```bash
-$ less-cli deploy --static my-application
-
-[less] Building... ⚙️
-[less] Build complete ✅
-[less] Deploying... 🚀
-[less] Deployment complete ✅
-[less] Resources
-[less] 	 - Websites URLs
-[less] 	   - http://my-application-demo-website.s3-website-eu-west-1.amazonaws.com
-[less] 🇨🇻
-```
-
-## `list`
+### `list`
 
 The `list` command allow you to fetch and list all your projects deployed to AWS.
 
 ```bash
-$ less-cli list
+$ less-cli projects list -o <organizationId>
 ```
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
 
 #### Example:
 ```bash
-$ less-cli list
+$ less-cli projects list -o org123
 
 ID: demo-api
 Created At: 2023-11-14T12:20:51.828Z
@@ -127,39 +108,45 @@ Created At: 2023-11-04T11:44:39.595Z
 Updated At: 2023-11-08T11:44:45.850Z
 ```
 
-## `delete`
+### `delete`
 
 The `delete` command allow you to delete a project deployed to AWS.
 
 ```bash
-$ less-cli delete <projectName>
+$ less-cli projects delete -o <organizationId> -n <projectName>
 ```
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-n, --name <projectName>`: The name of your Less project (required)
+
+*Note: Supports alphanumeric characters and "-".*
 
 #### Example:
 ```bash
-$ less-cli delete my-api
+$ less-cli projects delete my-api -o org123 -n my-application
 
 [less-cli] The process has started. Wait a few minutes and list the projects to see the changes.
 ```
 
-### Parameters
-
-`<projectName>`  
-The name of your Less project.  
-
-*Note: Supports alphanumeric characters and "-".*
-
-## `list resources`
+### `list_resources`
 
 The command `list resources` allow you to list your project resources after you deployed it. On this list includes your apis and websockets endpoints.
 
 ```bash
-$ less-cli list resources <projectName>
+$ less-cli projects list_resources -o <organizationId> -n <projectName>
 ```
+
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-n, --name <projectName>`: The name of your Less project (required)
+
+*Note: Supports alphanumeric characters and "-".*
 
 #### Example:
 ```bash
-$ less-cli list resources my-api
+$ less-cli projects list_resources -o org123 -n my-application
 
 [less-cli] API URLs
 [less-cli]      - Demo: https://3izstmbced.execute-api.eu-west-1.amazonaws.com/production
@@ -167,24 +154,26 @@ $ less-cli list resources my-api
 [less-cli]      - ChatSocketApi: wss://pr9fbdgwve.execute-api.eu-west-1.amazonaws.com/production
 ```
 
-### Parameters
-
-`<projectName>`  
-The name of your Less project.  
-
-*Note: Supports alphanumeric characters and "-".*
-
-## `log`
+### `log`
 
 The command `log` is used to fetches and logs the function logs based on the specified project and function path.
 
 ```bash
-$ less-cli log --project <projectName> --path <functionPath>
+$ less-cli projects log -o <organizationId> -n <projectName> -p <resourcePath>
 ```
+
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-n, --name <projectName>`: The name of your Less project (required) for which you want to list the logs.
+
+- `--p <resourcePath>`: The path of the function for which you want to see its logs.
+
+*Note: Supports alphanumeric characters and "-".*
 
 #### Example:
 ```bash
-$ less-cli log --project my-api --path apis/demo/hello/get
+$ less-cli projects log -o org123 -n my-application -p apis/demo/hello/get
 
 2023-11-29 15:00:22.938 START RequestId: 15e6099b-b101-4574-ab62-b848c967ee29 Version: $LATEST
 2023-11-29 15:00:22.956 2023-11-29T16:00:22.956Z 15e6099b-b101-4574-ab62-b848c967ee29 ERROR Error: test error
@@ -202,15 +191,69 @@ $ less-cli log --project my-api --path apis/demo/hello/get
 2023-11-29 15:00:28.017 REPORT RequestId: 009b82d3-41a6-4b3e-abba-35e6d1628939 Duration: 12.37 ms Billed Duration: 13 ms Memory Size: 128 MB Max Memory Used: 59 MB
 ```
 
-### Options
+## `websites`
 
-The command `log` requires two options.
+Manage websites.
 
-`--project <projectName>`
-This option allow you to specify the name of your project for which you want to list the logs.
+### `deploy`
+The `deploy` command allow you to deploy your static websites
 
-`--path <functionPath>`
-This option allow you to specify the path of the function for which you want to see its logs.
+```bash
+$ less-cli websites deploy -n <staticWebsiteName>
+```
+
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-n, --name <staticWebsiteName>`: The name of your website (required).
+
+*Note: Supports alphanumeric characters and "-".*
+
+#### Example:
+```bash
+$ less-cli websites deploy -o org123 -n myWebsite
+
+[less] Building... ⚙️
+[less] Build complete ✅
+[less] Deploying... 🚀
+[less] Deployment complete ✅
+[less] Resources
+[less] 	 - Websites URLs
+[less] 	   - http://my-application-demo-website.s3-website-eu-west-1.amazonaws.com
+[less] 🇨🇻
+```
+
+### `create-domain`
+Command to configure custom domains for websites.
+
+```bash
+$ less-cli websites create-domain -o <organizationId> -p <projectName> -f <staticFolder> -d <customDomain>
+```
+
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-n, --name <projectName>`: The name of your Less project (required).
+- `-f, --static-folder <staticFolder>`: The name of your static folder (required)
+- `-d, --custom-domain <customDomain>`: Your custom domain (required)
+
+*Note: Supports alphanumeric characters and "-".*
+
+#### Example:
+```bash
+$ less-cli websites create-domain -o org123 -p myWebsite -f demo-website -d demo-website.com
+
+[less-cli] Connecting to the Less Server...
+[less-cli] NS Records
+┌─────────┬──────┬───────────────────────────────────┬───────────────────────────┐
+│ (index) │ type │                name               │           value           │
+├─────────┼──────┼───────────────────────────────────┼───────────────────────────┤
+│    0    │ 'NS' │ 'demo-website.com'                │ 'ns-000.exampledns.org'   │
+│    1    │ 'NS' │ 'demo-website.com'                │ 'ns-000.exampledns.net'   │
+│    2    │ 'NS' │ 'demo-website.com'                │ 'ns-000.exampledns.co.uk' │
+│    3    │ 'NS' │ 'demo-website.com'                │ 'ns-000.exampledns.com'   │
+└─────────┴──────┴───────────────────────────────────┴───────────────────────────┘
+```
 
 ---
 

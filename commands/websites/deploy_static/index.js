@@ -1,6 +1,4 @@
 import AdmZip from 'adm-zip';
-import axios from 'axios';
-import chalk from 'chalk';
 import FormData from 'form-data';
 import fs from 'fs';
 import * as glob from 'glob';
@@ -8,14 +6,28 @@ import ora from 'ora';
 import path from 'path';
 import WebSocket from 'ws';
 
-import { get_less_token } from '../helpers/credentials.js';
+import config from '../../../config.js';
+import { authorizedPost } from '../../../service/authorizedRequests.js';
+import { validateProjectName } from '../../../utils/validators.js';
+import { getOrganizationId } from '../../../utils/getOrganizationId.js';
+import { logError, logInfo } from '../../../utils/logger.js';
 
 
 const spinner = ora({ text: '' });
 
 const CLI_PREFIX = '[less-cli]';
 
-async function deployProject(projectPath, projectName, envVars) {
+/**
+* Deploys a static website to a specified organization.
+* 
+* @param {object} params - Object with the following properties:
+* @param {string} params.projectPath - Absolute path to the directory.
+* @param {string} params.projectName - Name of the project to be deployed.
+* @param {object} params.envVars - Object with environment variables to be defined in the project.
+* @param {string} params.organizationId - The ID of the organization where the project will be deployed.
+* @returns {Promise} - A Promise that resolves when the project has been successfully deployed.
+*/
+async function deployProject({ projectPath, projectName, envVars, organizationId }) {
   let connectionId;
   const tempZipFilename = 'temp_project.zip';
   const zip = new AdmZip();
@@ -36,10 +48,7 @@ async function deployProject(projectPath, projectName, envVars) {
 
   await zip.writeZipPromise(tempZipFilename);
 
-  const serverUrl = 'https://less-server.chuva.io/v1/deploy-statics';
-  const socket = new WebSocket('wss://less-server.chuva.io');
-
-  socket.on('open', async () => { });
+  const socket = new WebSocket(config.WEBSOCKET_URL);
 
   socket.on('message', async (data) => {
     const message = JSON.parse(data);
@@ -52,19 +61,19 @@ async function deployProject(projectPath, projectName, envVars) {
         spinner.stop();
       }
 
-      console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright(status));
+      logInfo(status);
 
       if (status?.includes('Deploy completed')) {
-        console.log(chalk.yellowBright(CLI_PREFIX), '🇨🇻');
+        logInfo('🇨🇻');
       }
 
       if (resources) {
         const { websites } = resources;
 
         if (websites?.length) {
-          console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright('\t- Websites URLs'));
+          logInfo('\t- Websites URLs');
           websites.forEach(website => {
-            console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright(`\t\t- ${website}`));
+            logInfo(`\t\t- ${website}`);
           });
         }
 
@@ -86,22 +95,23 @@ async function deployProject(projectPath, projectName, envVars) {
         formData.append('env_vars', JSON.stringify(envVars));
         formData.append('project_name', JSON.stringify(projectName));
 
-        const LESS_TOKEN = await get_less_token();
-
         const headers = {
-          Authorization: `Bearer ${LESS_TOKEN}`,
           'connection_id': connectionId,
           ...formData.getHeaders(),
         };
 
-        const response = await axios.post(serverUrl, formData, { headers });
+        const response = await authorizedPost({
+          url: `/v1/organizations/${organizationId}/websites`, 
+          data: formData, 
+          headers 
+        });
 
         if (response.status === 202) {
           return response.data;
         }
       } catch (error) {
         spinner.stop();
-        console.error(chalk.redBright('Error:'), error?.response?.data || 'Deployment failed');
+        logError(error?.response?.data || 'Deployment failed');
         socket.close();
         process.exit(1); // Non-success exit code for failure
       } finally {
@@ -111,16 +121,27 @@ async function deployProject(projectPath, projectName, envVars) {
   });
 }
 
-export default async function deploy(projectName) {
+/**
+ * Deploys a static website to a specified organization using Less.
+ *
+ * @param {object} params - Object with the following properties:
+ * @param {string} params.name - Name of the project to be deployed.
+ * @param {string} [params.organization] - The ID of the organization where the project will be deployed.
+ * @returns {Promise} - A Promise that resolves when the project has been successfully deployed.
+ */
+export default async function deploy({ name: projectName, organization }) {
+  validateProjectName(projectName);
+  const organizationId = await getOrganizationId(organization);
+  
   spinner.start(`${CLI_PREFIX} Connecting to the Less Server... ⚙️`);
   spinner.start();
   try {
     const currentWorkingDirectory = process.cwd();
 
-    await deployProject(currentWorkingDirectory, projectName, {});
+    await deployProject({ projectPath: currentWorkingDirectory, projectName, envVars: {}, organizationId });
   } catch (error) {
     spinner.stop();
-    console.error(chalk.redBright('Error: '), error.message || 'An error occurred');
+    logError(error.message || 'An error occurred');
     process.exit(1); // Non-success exit code for any error
   }
 }

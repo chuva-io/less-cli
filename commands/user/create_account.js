@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
-import chalk from 'chalk';
-import api from '../service/api.js'
+import api from '../../service/api.js';
+import { logError, logInfo } from '../../utils/logger.js';
 
 const questions = [
   {
@@ -35,7 +35,7 @@ const questions = [
 
 async function create(user) {
   try {
-    const response = await api.post('v1/users', user);
+    const response = await api.post('/v1/users', user);
 
     if (response.status === 201) {
       inquirer
@@ -49,30 +49,32 @@ async function create(user) {
           },
         ])
         .then((answers) => {
-          console.log(chalk.yellowBright('[less-cli]'), chalk.green('Account verified! Please check your email for your Less credentials.'));
+          logInfo('Account verified!');
+          process.exit(0);
         });
     }
 
   } catch (error) {
     if (error.response && error.response.status === 400) {
-      console.log(chalk.redBright('Error:'), error.response.data.error);
+      logError(error.response.data.error);
     } else {
-      console.error(chalk.redBright('Error:'), error.message || 'An error occurred');
+      logError(error.message || 'An error occurred');
     }
+    process.exit(1);
   }
 }
 
 async function verify_user(code, user_id) {
   try {
-    await api.post(`v1/users/${user_id}/verify`, { code });
+    await api.post(`/v1/users/${user_id}/verify`, { code });
     return true;
   } catch (error) {
     if (error.response && error.response.status === 400) {
       return error.response.data.error;
     }
-
-    console.error(chalk.redBright('\nError:'), error.message || 'An error occurred');
+    logError(error.message || 'An error occurred');
   }
+  process.exit(1);
 }
 
 export default async function create_account() {

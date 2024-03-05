@@ -1,28 +1,23 @@
-import chalk from 'chalk';
-import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
-import validate_project_name from '../helpers/validate_project_name.js';
-import api from '../service/api.js';
+import { getOrganizationId } from '../../utils/getOrganizationId.js';
+import { validateProjectName } from '../../utils/validators.js';
+import { logError, logSuccess } from '../../utils/logger.js';
+import { authorizedDelete } from '../../service/authorizedRequests.js';
 
-export default async function delete_project(project_name) {
-    validate_project_name(project_name);
-    await verify_auth_token();
+export default async function delete_project({ organization, name }) {
+    const organizationId = await getOrganizationId(organization);
+    validateProjectName(name);
 
-    const api_endpoint = `/v1/projects/${project_name}`;
+    const url_path = `/v1/organizations/${organizationId}/projects/${name}`;
 
     try {
-        const LESS_TOKEN = await get_less_token();
-        const headers = {
-            Authorization: `Bearer ${LESS_TOKEN}`
-        };
-
-        const response = await api.delete(api_endpoint, { headers });
+        const response = await authorizedDelete({ url: url_path});
 
         if (response.status === 202) {
-          console.log(chalk.yellowBright('[less-cli]'), chalk.bold.greenBright(response.data.message));
+            logSuccess(response.data.message);
         }
         process.exit(0);
     } catch (error) {
-        console.error(chalk.redBright('Error:'), error?.response?.data || 'Delete project failed');
+        logError(error?.response?.data || 'Delete project failed');
         process.exit(1);
     }
 }
