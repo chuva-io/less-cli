@@ -277,6 +277,29 @@ $ less-cli tokens create -d "CI-CD"
 
 [less-cli] The token has been successfully created for your organization. Please make sure to copy your token now. You will not have access to it again.
 [less-cli] Token secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJ0b3Bp
+
+## `organizations`
+
+Manage organizations.
+
+### `list`
+This command will list all available organizations that you have access to.
+
+```bash
+$ less-cli organizations list
+```
+
+#### Example:
+```bash
+$ less-cli organizations list
+
+ID: f64e1ee82-4383-1581-8f95-aa309aa02bda
+Name: Best Company Inc.
+Email: info@bestcompanyinc.com
+
+ID: 3ee8725-32fd-a2eb-4add-ce43f3ee4383
+Name:  Second Organization Ltd.
+Email: hello@secondorg.co
 ```
 
 ---
