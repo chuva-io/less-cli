@@ -12,7 +12,7 @@ export async function selectOrganization() {
   let orgId;
   const organizations = await fetchOrganizations();
   if (organizations.length === 1) {
-    orgId = organizations[0]?.id;
+    orgId = 'me';
   } else {
     orgId = await promptToSelectOrg(organizations);
   }
