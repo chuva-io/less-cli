@@ -15,6 +15,7 @@ import get_function_logs from '../commands/projects/logs/get_function_logs.js';
 import delete_project from '../commands/projects/delete.js';
 import create_token from '../commands/tokens/create.js';
 import get_organizations from '../commands/organizations/get_all.js'; 
+import add_member from '../commands/members/add.js'; 
 
 const program = new Command();
 
@@ -129,6 +130,18 @@ tokens
     .option('-o, --organization <organizationId>', 'Organization ID')
     .option('-d, --description <tokenDescription>', 'Token description')
     .action(create_token);
+
+// MEMBERS - commands
+const members = program
+    .command('members')
+    .description('Manage members');
+
+members
+    .command('add')
+    .description('Add member to an organization')
+    .option('-o, --organization <organizationId>', 'Organization ID')
+    .option('-e, --email <userEmail>', 'The less user email you want to add')
+    .action(add_member);
 
 // Parsing the command-line arguments and executing the corresponding actions
 program.parse();
