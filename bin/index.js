@@ -14,6 +14,7 @@ import create_custom_domain from '../commands/websites/create_custom_domain/inde
 import get_function_logs from '../commands/projects/logs/get_function_logs.js';
 import delete_project from '../commands/projects/delete.js';
 import create_token from '../commands/tokens/create.js';
+import get_organizations from '../commands/organizations/get_all.js'; 
 
 const program = new Command();
 
@@ -28,6 +29,15 @@ program
     .description('CLI to interact with Less.')
     .version(version)
     .usage('[COMMAND]');
+
+//  ORGANIZATIONS - Commands
+const organizations = program.command('organizations')
+    .description('Manage organizations.');
+
+organizations
+    .command('list')
+    .description('list your organizations.')
+    .action(get_organizations);
 
 //  PROJECTS - Commands
 const projects = program.command('projects')

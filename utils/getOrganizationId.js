@@ -5,8 +5,8 @@ import { selectOrganization } from "../service/selectOrganization.js";
  * If the organization exists, it selects the organization; otherwise, it returns 'me'.
  *
  * @param {Object} organization - The organization object.
- * @returns {Promise<string>} The ID of the organization or 'me'.
+ * @returns {Promise<string>} The ID of the organization.
  */
 export async function getOrganizationId(organization) {
-  return organization ? await selectOrganization() : 'me';
+  return organization ? organization : await selectOrganization();
 }
