@@ -13,6 +13,7 @@ import create_session from '../commands/user/create_session.js';
 import create_custom_domain from '../commands/websites/create_custom_domain/index.js';
 import get_function_logs from '../commands/projects/logs/get_function_logs.js';
 import delete_project from '../commands/projects/delete.js';
+import create_token from '../commands/tokens/create.js';
 
 const program = new Command();
 
@@ -106,6 +107,18 @@ users
     .option('-u, --user <email>', 'User email address')
     .option('-p, --password <password>', 'User password', '*')
     .action(create_session);
+
+// TOKENS - commands
+const tokens = program
+    .command('tokens')
+    .description('Manage tokens');
+
+tokens
+    .command('create')
+    .description("Create token")
+    .option('-o, --organization <organizationId>', 'Organization ID')
+    .option('-d, --description <tokenDescription>', 'Token description')
+    .action(create_token);
 
 // Parsing the command-line arguments and executing the corresponding actions
 program.parse();

@@ -255,6 +255,30 @@ $ less-cli websites create-domain -o org123 -p myWebsite -f demo-website -d demo
 └─────────┴──────┴───────────────────────────────────┴───────────────────────────┘
 ```
 
+## `tokens`
+
+Manage tokens.
+
+### `create`
+This command will create a new token for the specified organization.
+
+```bash
+$ less-cli tokens create -o <organizationId> -d <description>
+```
+
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-d, --description <tokenDescription>`: The description of the token (required).
+
+#### Example:
+```bash
+$ less-cli tokens create -d "CI-CD"
+
+[less-cli] The token has been successfully created for your organization. Please make sure to copy your token now. You will not have access to it again.
+[less-cli] Token secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJ0b3Bp
+```
+
 ---
 
 Do more with Less.  

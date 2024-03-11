@@ -40,7 +40,20 @@ export function validateStaticName(name) {
     logError('Error: static name option does not satisfy the pattern [a-z][-a-z0-9]*');
     process.exit(1);
   }
-}
+};
+
+/**
+* Validates the token description.
+*
+* @param {string} description - The token description to validate.
+* @throws {Error} If the token description is not provided.
+*/
+export function validateTokenDescription(description) {
+  if (!description) {
+    logError('Error: token description option is required');
+    process.exit(1);
+  }
+};
 
 /**
 * Validates the custom domain.
