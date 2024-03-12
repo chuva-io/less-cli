@@ -56,6 +56,20 @@ export function validateTokenDescription(description) {
 };
 
 /**
+* Validates Email.
+*
+* @param {string} email - The Email to validate.
+* @throws {Error} If the email format is invalid.
+*/
+export function validateEmail(email) {
+  const re = /^\S+@\S+\.\S+$/;
+  if (!email || !re.test(email)) {  
+    logError('Invalid email address');
+    process.exit(1);
+  }
+};
+
+/**
 * Validates the custom domain.
 *
 * @param {string} customDomain - The custom domain to validate.

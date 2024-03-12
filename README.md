@@ -302,6 +302,28 @@ Name:  Second Organization Ltd.
 Email: hello@secondorg.co
 ```
 
+## `members`
+
+Manage members.
+
+### `add`
+This command will add a new member to an organization
+
+```bash
+$ less-cli members add -o <organizationId> --email <memberEmail>
+```
+
+#### Parameters
+
+- `-o, --organization <organizationId>`: Your Less organization ID (optional), if omitted, Less will use your personal account ID
+- `-e, --email <memberEmail>`: The email address of the user to be added as a member (required).
+
+#### Example:
+```bash
+$ less-cli members add -o org123 --email john.doe@example.com
+
+[less-cli] The member has been added to the organization with success.
+```
 ---
 
 Do more with Less.  
