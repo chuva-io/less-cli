@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import path from 'path';
+import { fileURLToPath } from 'url';
+import path, { dirname }  from 'path';
 import fs from 'fs';
 import { Command, Option } from 'commander';
 import chalk from 'chalk';
@@ -24,8 +25,11 @@ import delete_project from '../commands/projects/delete.js';
 
 const program = new Command();
 
+// Get the directory of the current module file
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 // Get package.json version
-const packagePath = path.join(process.cwd(), 'package.json');
+const packagePath = path.join(__dirname, '..', 'package.json');
 const packageContent = JSON.parse(fs.readFileSync(packagePath).toString());
 const version = packageContent?.version;
 
