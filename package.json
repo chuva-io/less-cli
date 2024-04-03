@@ -5,7 +5,7 @@
   "author": "Chuva, LLC",
   "license": "Apache-2.0",
   "url": "https://github.com/chuva-io/less-cli.git",
-  "homepage": "https://bit.ly/less-framework",
+  "homepage": "https://docs.less.chuva.io",
   "type": "module",
   "exports": "./bin/index.js",
   "bin": {
@@ -29,10 +29,9 @@
     "aws",
     "python",
     "javascript",
-    "swift",
     "go",
     "c#",
-    "ruby",
+    "rust",
     "less",
     "less-cli"
   ],
