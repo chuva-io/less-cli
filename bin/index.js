@@ -6,8 +6,6 @@ import chalk from 'chalk';
 
 import deploy from '../commands/deploy/index.js';
 import deploy_static from '../commands/deploy_static/index.js';
-import add_template from '../commands/add-template/index.js';
-import init_project_structure from '../commands/init/project_structure.js';
 import create_route from '../commands/create/route/index.js';
 import create_socket from '../commands/create/socket/index.js';
 import create_topic from '../commands/create/topic/index.js';
@@ -136,35 +134,6 @@ program
     .command('delete <project_name>')
     .description('Delete your project. Example usage: less-cli delete hello-api')
     .action(delete_project);
-
-const template = program
-    .command('template')
-    .description('Use templates to help you get your boilerplate code set up for common tasks.');
-
-template
-    .command('add')
-    .description('Add a template to your project.')
-    .option('-n, --name <name>', 'The template you want to add. Options are "mongodb-js-shared-client".')
-    .action((str, options) => {
-        if (!options.name) {
-            console.log(chalk.redBright('Error:'), 'The template name is required.');
-            process.exit(1);
-        }
-
-        switch (options.name) {
-            case 'mongodb-js-shared-client':
-                add_template.create_mongodb_js_shared_client();
-                process.exit(0);
-            default:
-                console.log(chalk.redBright('Error:'), 'Invalid template provided.');
-                process.exit(1);
-        }
-    });
-
-program
-    .command('init')
-    .description('Create your initial Less project structure.')
-    .action(init_project_structure);
 
 const create = program
     .command('create')
