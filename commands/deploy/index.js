@@ -10,7 +10,6 @@ import WebSocket from 'ws';
 import yaml from 'js-yaml';
 
 import { get_less_token } from '../helpers/credentials.js';
-import check_socket_connect_disconnect_processors from '../../utils/check_socket_connect_disconnect_processors.js';
 
 const spinner = ora({ text: '' });
 
@@ -95,8 +94,8 @@ async function deployProject(projectPath, projectName, envVars) {
 
   await zip.writeZipPromise(tempZipFilename);
 
-  const serverUrl = 'https://less-server.chuva.io/v1/deploys';
-  const socket = new WebSocket('wss://less-server.chuva.io');
+  const serverUrl = 'http://localhost:3000/v1/deploys';
+  const socket = new WebSocket('ws://localhost:3000');
 
   socket.on('open', async () => { });
 
@@ -182,9 +181,6 @@ export default async function deploy(projectName) {
   spinner.start();
   try {
     const currentWorkingDirectory = process.cwd();
-    await check_socket_connect_disconnect_processors(
-      path.join(currentWorkingDirectory, 'less', 'sockets')
-    );
   
     const configFile = path.join(currentWorkingDirectory, 'less.config');
     const cronsDir = path.join(currentWorkingDirectory, 'less', 'crons');
