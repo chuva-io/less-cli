@@ -18,6 +18,7 @@ import get_all from '../commands/projects/get_all.js';
 import get_by_id from '../commands/projects/get_by_id.js';
 import create_account from '../commands/user/create_account.js';
 import create_session from '../commands/user/create_session.js';
+import forgot_password from '../commands/user/forgot_password.js';
 import { verify_auth_token } from '../commands/helpers/credentials.js';
 import create_custom_domain from '../commands/create_custom_domain/index.js';
 import fetch_and_log_function_logs from '../commands/projects/logs/fetch_and_log_function_logs.js';
@@ -126,6 +127,11 @@ program
     .command('register')
     .description('Create your less account')
     .action(create_account);
+
+program
+    .command('forgot-password')
+    .description("This command will send a message to the end user with a confirmation code that is required to change the user's password.")
+    .action(forgot_password);
 
 program
     .command('login')
