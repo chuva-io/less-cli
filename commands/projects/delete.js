@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
-import validate_project_name from '../helpers/validate_project_name.js';
+import validate_project_name from '../helpers/validations/validate_project_name.js';
 import api from '../service/api.js';
 
 export default async function delete_project(project_name) {
