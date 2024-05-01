@@ -45,6 +45,26 @@ $ less-cli login
 [less-cli] Login successful! Your LESS_TOKEN has been exported to your environment.
 ```
 
+## `forgot-password`
+
+If you've forgotten your password, this command enables you to recover it by sending a verification code to your email, which is then required to change your password.
+
+To initiate the password recovery process, use the command `forgot-password`.
+
+```bash
+$ less-cli forgot-password
+```
+
+#### Example:
+```bash
+$ less-cli forgot-password
+
+[less-cli] Enter your email: cesaria@chuva.io
+[less-cli] Enter the verification code sent to your email: ******
+[less-cli] Enter new password: ************
+[less-cli] Password reset successfully.
+```
+
 ## `deploy`
 
 The `deploy` command allow you to deploy your Less project to AWS.

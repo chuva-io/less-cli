@@ -49,7 +49,7 @@ async function create(user) {
           },
         ])
         .then((answers) => {
-          console.log(chalk.yellowBright('[less-cli]'), chalk.green('Account verified! Please check your email for your Less credentials.'));
+          console.log(chalk.yellowBright('[less-cli]'), chalk.green('Account verified!'));
         });
     }
 
