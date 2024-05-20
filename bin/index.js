@@ -195,7 +195,7 @@ create
     .command('subscribers')
     .summary('Creates Subscribers to Topics.')
     .description('Creates Subscribers to Topics.\n\nRead the Topics / Subscribers (Pub / Sub) Documentation: https://less.chuva.io/topics_subscribers')
-    .option('-n, --names <subscribers...>', 'Required: A list of Subscribers to create. (E.g. "--subscribers send_welcome_email send_to_analytics")')
+    .option('-n, --names <subscribers...>', 'Required: A list of Subscribers to create. (E.g. "--names send_welcome_email send_to_analytics")')
     .option('-t, --topic <topic>', 'Required: The name of the Topic to create or subscribe to. (E.g. "--name user_created")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for each subscriber\'s code.')
