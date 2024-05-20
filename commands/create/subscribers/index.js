@@ -8,7 +8,7 @@ import {
 const questions = [
   {
     type: 'rawList',
-    name: 'subscribers',
+    name: 'names',
     message: 'Enter a list of Subscribers to create. (E.g. "send_welcome_email send_to_analytics")',
     default: 'send_welcome_email send_to_analytics',
     validate: function (input) {
@@ -49,7 +49,7 @@ export default async (options) => {
     topic_path = 'less/topics';
   }
 
-  answers.subscribers.forEach(subscriber => {
+  answers.names.forEach(subscriber => {
     let subscriber_folder_path = `${topic_path}/${answers.topic}/${subscriber}`;
     let subscriber_file_content = subscriber_templates[answers.language];
     const file_name = language_file_names[answers.language];
