@@ -43,7 +43,7 @@ export default async function fetch_and_log_function_logs(options) {
         const { status, data } = await api.get(`/v1/projects/${project}/resources/${resource_id}/logs`, { headers });
 
         if (status === 200) {
-            if (!data || data.length === 0) {
+            if (!data || data.length === 0) { 
                 handle_error(`No logs found for the path ${path} in project ${project}`);
             }
             

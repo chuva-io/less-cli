@@ -1,5 +1,6 @@
 #!/bin/bash
-
+echo "npm token: $NPM_TOKEN"
+echo "GitHub token: $GH_TOKEN"
 set -e
 
 # Function to log messages
