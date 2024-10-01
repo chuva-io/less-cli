@@ -39,7 +39,10 @@ async function login(user) {
 
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      console.log(chalk.redBright('Error:'), error.response.data.error);
+      const forgot_password_command = chalk.yellowBright('less-cli forgot-password')
+      console.log(
+        chalk.redBright('Error:'), 
+        `${error.response.data.error}\n\nIf you have forgotten your password you can reset it by running the following command:\n - ${forgot_password_command}`);
     } else {
       console.error(chalk.redBright('Error:'), error.message || 'An error occurred');
     }
