@@ -3,7 +3,6 @@ import { fileURLToPath } from 'url';
 import path, { dirname }  from 'path';
 import fs from 'fs';
 import { Command, Option } from 'commander';
-import chalk from 'chalk';
 
 import deploy from '../commands/deploy/index.js';
 import deploy_static from '../commands/deploy_static/index.js';
@@ -19,7 +18,6 @@ import get_by_id from '../commands/projects/get_by_id.js';
 import create_account from '../commands/user/create_account.js';
 import create_session from '../commands/user/create_session.js';
 import forgot_password from '../commands/user/forgot_password.js';
-import { verify_auth_token } from '../commands/helpers/credentials.js';
 import create_custom_domain from '../commands/create_custom_domain/index.js';
 import fetch_and_log_function_logs from '../commands/projects/logs/fetch_and_log_function_logs.js';
 import delete_project from '../commands/projects/delete.js';
@@ -46,13 +44,6 @@ program
     .description('Deploy your less project.')
     .option('--static', 'Deploy your less static websites')
     .action(async (project_name, options) => {
-        verify_auth_token();
-
-        if (!/^[a-z][-a-z0-9]*$/.test(project_name)) {
-            console.log(chalk.redBright('Error:'), 'The project_name must satisfy regular expression pattern: [a-z][-a-z0-9]');
-            process.exit(1);
-        }
-
         if (options.static) {
             deploy_static(project_name);
             return;
@@ -67,46 +58,7 @@ program
     .option('--project-name <projectName>', 'Name of your project')
     .option('--static-name <staticName>', 'Name of your static folder')
     .option('--custom-domain <customDomain>', 'Your custom domain')
-    .action((_, options) => {
-        verify_auth_token();
-
-        const { 
-            projectName,
-            staticName,
-            customDomain
-        } = options._optionValues;
-
-        if (
-            !projectName ||
-            !/^[a-z][-a-z0-9]*$/.test(projectName) 
-        ) {
-            console.log(chalk.redBright('Error:'), 'The projectName must satisfy regular expression pattern: [a-z][-a-z0-9]');
-            process.exit(1);
-        }
-
-        if (
-            !staticName ||
-            !/^[a-z][-a-z0-9]*$/.test(staticName)
-        ) {
-            console.log(chalk.redBright('Error:'), 'The staticName must satisfy regular expression pattern: [a-z][-a-z0-9]');
-            process.exit(1);
-        }
-
-        if (
-            !customDomain ||
-            !/^(?!https?:\/\/)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(customDomain)
-        ) {
-            console.log(chalk.redBright('Error:'), 'The customDomain must satisfy regular expression pattern: (?!https?:\/\/)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-            console.log(chalk.redBright('Error:'), 'Example: example.com, subdomain.example.com, sub.subdomain.example.com');
-            process.exit(1);
-        }
-
-        create_custom_domain({
-            projectName,
-            staticName,
-            customDomain
-        });
-    });
+    .action(create_custom_domain);
 
 program
     .command('list')
@@ -195,7 +147,7 @@ create
     .command('subscribers')
     .summary('Creates Subscribers to Topics.')
     .description('Creates Subscribers to Topics.\n\nRead the Topics / Subscribers (Pub / Sub) Documentation: https://less.chuva.io/topics_subscribers')
-    .option('-n, --names <subscribers...>', 'Required: A list of Subscribers to create. (E.g. "--subscribers send_welcome_email send_to_analytics")')
+    .option('-n, --names <subscribers...>', 'Required: A list of Subscribers to create. (E.g. "--names send_welcome_email send_to_analytics")')
     .option('-t, --topic <topic>', 'Required: The name of the Topic to create or subscribe to. (E.g. "--name user_created")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for each subscriber\'s code.')

@@ -3,13 +3,17 @@ import axios from 'axios';
 import chalk from 'chalk';
 import FormData from 'form-data';
 import fs from 'fs';
+import os from 'os';
 import * as glob from 'glob';
 import ora from 'ora';
 import path from 'path';
 import WebSocket from 'ws';
 import yaml from 'js-yaml';
 
-import { get_less_token } from '../helpers/credentials.js';
+import validate_project_folder from '../helpers/validations/validate_project_folder.js';
+import { get_less_token, verify_auth_token } from '../helpers/credentials.js';
+import validate_project_name from '../helpers/validations/validate_project_name.js';
+import handleError from '../helpers/handle_error.js';
 
 const spinner = ora({ text: '' });
 
@@ -185,10 +189,13 @@ export default async function deploy(projectName) {
     const cronsDir = path.join(currentWorkingDirectory, 'less', 'crons');
     const envVars = loadEnvironmentVariables(configFile, cronsDir);
 
+    verify_auth_token()
+    validate_project_name(projectName)
+    validate_project_folder(projectPath)
+
     await deployProject(currentWorkingDirectory, projectName, envVars);
   } catch (error) {
     spinner.stop();
-    console.error(chalk.redBright('Error: '), error.message || 'An error occurred');
-    process.exit(1); // Non-success exit code for any error
+    handleError(error.message)
   }
 }

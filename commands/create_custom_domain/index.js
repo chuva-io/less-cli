@@ -1,8 +1,12 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import WebSocket from 'ws';
-import { get_less_token } from '../helpers/credentials.js';
+import { get_less_token, verify_auth_token } from '../helpers/credentials.js';
 import api from '../service/api.js';
+import validate_project_name from '../helpers/validations/validate_project_name.js';
+import validate_static_folder_name from '../helpers/validations/validate_static_folder_name.js';
+import validate_static_domain_name from '../helpers/validations/validate_static_domain_name.js';
+import handleError from '../helpers/handle_error.js';
 
 const spinner = ora({ text: '' });
 
@@ -52,7 +56,7 @@ async function _create_custom_domain({
         process.exit();
       } catch (error) {
         spinner.stop();
-        console.error(chalk.redBright('Error:'), error?.response?.data || 'Something went wrong');
+        handleError('Something went wrong');
         socket.close();
         process.exit(1); // Non-success exit code for failure
       }
@@ -68,6 +72,11 @@ export default async function create_custom_domain({
   spinner.start(`${CLI_PREFIX} Connecting to the Less Server... ⚙️`);
   spinner.start();
   try {
+    verify_auth_token()
+    validate_project_name(projectName)
+    validate_static_folder_name(staticName)
+    validate_static_domain_name(customDomain)
+    
     await _create_custom_domain({
       projectName,
       staticName,
@@ -75,7 +84,6 @@ export default async function create_custom_domain({
     });
   } catch (error) {
     spinner.stop();
-    console.error(chalk.redBright('Error: '), error.message || 'An error occurred');
-    process.exit(1); // Non-success exit code for any error
+    handleError(error.message)
   }
 }
