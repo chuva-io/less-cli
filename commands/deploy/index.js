@@ -98,8 +98,8 @@ async function deployProject(projectPath, projectName, envVars) {
 
   await zip.writeZipPromise(tempZipFilename);
 
-  const serverUrl = 'https://less-server.chuva.io/v1/deploys';
-  const socket = new WebSocket('wss://less-server.chuva.io');
+  const serverUrl = 'http://localhost:3000/v1/deploys';
+  const socket = new WebSocket('ws://localhost:3000');
 
   socket.on('open', async () => { });
 
@@ -185,6 +185,7 @@ export default async function deploy(projectName) {
   spinner.start();
   try {
     const currentWorkingDirectory = process.cwd();
+  
     const configFile = path.join(currentWorkingDirectory, 'less.config');
     const cronsDir = path.join(currentWorkingDirectory, 'less', 'crons');
     const envVars = loadEnvironmentVariables(configFile, cronsDir);
