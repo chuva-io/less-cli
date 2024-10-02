@@ -24,13 +24,8 @@ if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
 
   # Publish to npm
-  if [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-.+$ ]]; then
-    yarn
-    yarn publish --tag next --access=public
-  else
-    yarn
-    yarn publish --access=public
-  fi
+  yarn
+  yarn publish --access=public
 
   # Create a new tag and release on GitHub
   git fetch --tags
