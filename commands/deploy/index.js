@@ -191,7 +191,7 @@ export default async function deploy(projectName) {
 
     verify_auth_token()
     validate_project_name(projectName)
-    validate_project_folder(projectPath)
+    validate_project_folder(currentWorkingDirectory)
 
     await deployProject(currentWorkingDirectory, projectName, envVars);
   } catch (error) {
