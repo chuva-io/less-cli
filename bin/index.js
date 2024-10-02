@@ -70,9 +70,9 @@ program
 
 program
     .command('log')
-    .description('List logs by project. Example usage: less-cli log --project hello-api --path apis/demo/hello/get')
+    .description('List logs by project. Example usage: less-cli log --project hello-api --function apis/demo/hello/get')
     .option('--project <projectName>', 'Specify the name of your project for which you want to list the logs')
-    .option('--path <functionPath>', 'Specify the path of the function for which you want to log')
+    .option('--function <functionPath>', 'Specify the path of the function for which you want to log')
     .action(fetch_and_log_function_logs);
 
 program
