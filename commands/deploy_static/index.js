@@ -72,12 +72,13 @@ async function deployProject(projectPath, projectName, envVars) {
         }
 
         socket.close();
-        process.exit(0);
+        return ;
       }
 
       if (error) {
         socket.close();
-        process.exit(1); // Non-success exit code for failure
+        process.exitCode = 1; // Non-success exit code for failure
+        return ;
       }
     }
 
@@ -107,6 +108,9 @@ async function deployProject(projectPath, projectName, envVars) {
         socket.close();
         handleError('Deployment failed')
       } finally {
+        if (process.exitCode && process.exitCode !== 0) {
+          return ;
+        }
         fs.unlinkSync(tempZipFilename);
       }
     }

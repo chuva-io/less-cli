@@ -3,7 +3,6 @@ import axios from 'axios';
 import chalk from 'chalk';
 import FormData from 'form-data';
 import fs from 'fs';
-import os from 'os';
 import * as glob from 'glob';
 import ora from 'ora';
 import path from 'path';
@@ -40,7 +39,8 @@ function loadEnvironmentVariables(configFile, cronsPath) {
             `\nMust create the less.config file and define the follow environment variables on 'env_vars':\n  ${missingEnvVars}`,
           ),
         );
-        process.exit(1);
+        process.exitCode = 1;
+        return ;
       }
     }
   
@@ -53,7 +53,8 @@ function loadEnvironmentVariables(configFile, cronsPath) {
 
   if (!config?.hasOwnProperty('env_vars')) {
     console.error(chalk.redBright("\nKey 'env_vars' not found in the less.config file"));
-    process.exit(1);
+    process.exitCode = 1;
+    return ;
   }
 
   const keys = config.env_vars;
@@ -62,14 +63,16 @@ function loadEnvironmentVariables(configFile, cronsPath) {
   // Verifying if the less config file has env vars
   if (!keys || !keys?.length) {
     console.error(chalk.redBright(`\nEnvironment variables must be defined in 'env_vars' on less.config file`));
-    process.exit(1); 
+    process.exitCode = 1;
+    return ;
   }
 
   for (const key of keys) {
     const value = process.env[key];
     if (value === undefined) {
       console.error(chalk.redBright(`\nEnvironment variable '${key}' must be defined`));
-      process.exit(1);
+      process.exitCode = 1;
+      return ;
     }
     envVars[key] = value;
   }
@@ -138,12 +141,13 @@ async function deployProject(projectPath, projectName, envVars) {
         }
 
         socket.close();
-        process.exit(0);
+        return ;
       }
 
       if (error) {
         socket.close();
-        process.exit(1); // Non-success exit code for failure
+        process.exitCode = 1; // Non-success exit code for failure
+        return ;
       }
     }
 
@@ -172,8 +176,11 @@ async function deployProject(projectPath, projectName, envVars) {
         spinner.stop();
         console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Deployment failed');
         socket.close();
-        process.exit(1); // Non-success exit code for failure
+        process.exitCode = 1; // Non-success exit code for failure
       } finally {
+        if (process.exitCode && process.exitCode !== 0) {
+          return ;
+        }
         fs.unlinkSync(tempZipFilename);
       }
     }
@@ -188,6 +195,10 @@ export default async function deploy(projectName) {
     const configFile = path.join(currentWorkingDirectory, 'less.config');
     const cronsDir = path.join(currentWorkingDirectory, 'less', 'crons');
     const envVars = loadEnvironmentVariables(configFile, cronsDir);
+
+    if (!envVars) {
+      return ;
+    }
 
     verify_auth_token()
     validate_project_name(projectName)
