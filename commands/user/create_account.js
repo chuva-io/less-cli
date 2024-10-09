@@ -38,7 +38,7 @@ async function create(user) {
     const response = await api.post('v1/users', user);
 
     if (response.status === 201) {
-      inquirer
+      await inquirer
         .prompt([
           {
             type: 'password',
@@ -47,10 +47,9 @@ async function create(user) {
             message: 'Enter the verification code sent to your email:',
             validate: async input => await verify_user(input, response.data.id)
           },
-        ])
-        .then((answers) => {
-          console.log(chalk.yellowBright('[less-cli]'), chalk.green('Account verified!'));
-        });
+        ]);
+
+        console.log(chalk.yellowBright('[less-cli]'), chalk.green('Account verified!'));
     }
 
   } catch (error) {
@@ -76,5 +75,6 @@ async function verify_user(code, user_id) {
 }
 
 export default async function create_account() {
-  inquirer.prompt(questions).then(async (answers) => await create(answers));
+  const answers = await inquirer.prompt(questions);
+  await create(answers)
 }

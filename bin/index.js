@@ -21,6 +21,7 @@ import forgot_password from '../commands/user/forgot_password.js';
 import create_custom_domain from '../commands/create_custom_domain/index.js';
 import fetch_and_log_function_logs from '../commands/projects/logs/fetch_and_log_function_logs.js';
 import delete_project from '../commands/projects/delete.js';
+import check_for_updates from '../utils/check_for_updates.js';
 
 const program = new Command();
 
@@ -48,11 +49,11 @@ program
     .option('--static', 'Deploy your less static websites')
     .action(async (project_name, options) => {
         if (options.static) {
-            deploy_static(project_name);
+            await deploy_static(project_name);
             return;
         };
 
-        deploy(project_name);
+        await deploy(project_name);
     });
 
 program

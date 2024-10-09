@@ -55,5 +55,6 @@ async function login(user) {
 }
 
 export default async function create_session() {
-  inquirer.prompt(questions).then(async (answers) => await login(answers));
+  const answers = await inquirer.prompt(questions);
+  await login(answers);
 }
