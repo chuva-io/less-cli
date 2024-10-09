@@ -54,6 +54,13 @@ program
         };
 
         await deploy(project_name);
+    
+    })
+    .hook('postAction',(command) => {
+        if (!command.opts().static) {
+            const project_name = command.args[0]; 
+            console.log(`\nYou can visit https://dashboard.less.chuva.io/projects/${project_name} to view your project's resources, logs, and metrics from your browser.`);
+        }
     });
 
 program
