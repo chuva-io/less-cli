@@ -97,7 +97,6 @@ async function recover(email) {
         chalk.green('Password reset successfully')
       );
     }
-    process.exit(0); 
   } catch (error) {
     if (error.response && error.response.status === 400) {
       console.log(chalk.redBright('Error:'), error.response.data.error);
@@ -107,7 +106,7 @@ async function recover(email) {
         error.message || 'An error occurred'
       );
     }
-    process.exit(1); // Non-success exit code for failure
+    process.exitCode = 1;
   }
 }
 
