@@ -25,8 +25,9 @@ export default async function get_all() {
                 console.log('');
             });
         }
+        process.exit(0);
     } catch (error) {
         console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Get projects failed');
-        process.exitCode = 1;
+        process.exit(1);
     }
 }

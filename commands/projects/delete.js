@@ -20,8 +20,9 @@ export default async function delete_project(project_name) {
         if (response.status === 202) {
           console.log(chalk.yellowBright('[less-cli]'), chalk.bold.greenBright(response.data.message));
         }
+        process.exit(0);
     } catch (error) {
         console.error(chalk.redBright('Error:'), error?.response?.data || 'Delete project failed');
-        process.exitCode = 1;
+        process.exit(1);
     }
 }
