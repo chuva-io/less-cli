@@ -34,6 +34,10 @@ async function login(user) {
             LESS_TOKEN: response.data.token 
         });
 
+        if (process.exitCode && process.exitCode !== 0) {
+          return ;
+        }
+
         console.log(chalk.yellowBright('[less-cli]'), chalk.green('Login successful! Your LESS_TOKEN has been exported to your environment.'));
     }
 
@@ -46,6 +50,7 @@ async function login(user) {
     } else {
       console.error(chalk.redBright('Error:'), error.message || 'An error occurred');
     }
+    process.exitCode = 1;
   }
 }
 
