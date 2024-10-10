@@ -6,8 +6,7 @@ import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
 export default async function get_by_id(project_name) {
     if (!/^[a-zA-Z][-a-zA-Z0-9]*$/.test(project_name)) {
         console.log(chalk.redBright('Error:'), 'The project_name must satisfy regular expression pattern: [a-zA-Z][-a-zA-Z0-9]');
-        process.exitCode = 1;
-        return ;
+        process.exit(1);
     }
 
     await verify_auth_token();
@@ -37,8 +36,9 @@ export default async function get_by_id(project_name) {
                 });
               }
         }
+        process.exit(0);
     } catch (error) {
         console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Get projects failed');
-        process.exitCode = 1;
+        process.exit(1);
     }
 }

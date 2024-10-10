@@ -22,7 +22,7 @@ export async function set_credentials(credentials) {
 		await fs.writeFile(credentials_path, JSON.stringify(credentials), 'utf8');
 	} catch (err) {
 		console.error(chalk.redBright('Error:'), `Error writing to ${credentials_path}:`, err);
-		process.exitCode = 1;
+		process.exit(1);
 	}
 }
 
@@ -45,7 +45,7 @@ export async function get_credentials() {
 		return credentials;
 	} catch (err) {
 		console.error(chalk.redBright('Error:'), token_error_message);
-		process.exitCode = 1;
+		process.exit(1);
 	}
 }
 
@@ -66,13 +66,13 @@ export async function get_less_token() {
 
 		if (!credentials?.LESS_TOKEN) {
 			console.error(chalk.redBright('Error:'), token_error_message);
-			process.exitCode = 1;
+			process.exit(1);
 		}
 
 		return credentials?.LESS_TOKEN;
 	} catch (err) {
 		console.error(chalk.redBright('Error:'), token_error_message);
-		process.exitCode = 1;
+		process.exit(1);
 	}
 }
 
@@ -87,6 +87,7 @@ export async function verify_auth_token() {
 
     if (!credentials?.LESS_TOKEN) {
       console.error(chalk.redBright('Error:'), '`LESS_TOKEN` not found in your environment variables. Please login using the `login` command and try again.');
+      process.exit(1);
     }
   }
 }

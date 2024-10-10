@@ -53,10 +53,12 @@ async function _create_custom_domain({
 
         spinner.stop();
         socket.close();
+        process.exit();
       } catch (error) {
         spinner.stop();
         handleError('Something went wrong');
         socket.close();
+        process.exit(1); // Non-success exit code for failure
       }
     }
   });

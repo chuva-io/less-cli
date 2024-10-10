@@ -55,9 +55,9 @@ export default async function fetch_and_log_function_logs(options) {
             data.forEach(log => {
                 console.log(chalk.bold.greenBright(log.timestamp), log.message.slice(0, -1).replaceAll('\t',' '));
             });
+            process.exit(0);
         }
     } catch (error) {
         handle_error(error?.response?.data?.error || `Get logs for the function ${function_id} in project ${project} failed`);
-        process.exitCode = 1;
     }
 }

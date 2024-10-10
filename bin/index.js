@@ -38,10 +38,7 @@ program
     .name('less-cli')
     .description('CLI to interact with Less')
     .version(version)
-    .usage('[COMMAND]')
-    .hook('postAction', async () => {
-        process.exit(process.exitCode);
-    });
+    .usage('[COMMAND]');
 
 program
     .command('deploy <project_name>')
