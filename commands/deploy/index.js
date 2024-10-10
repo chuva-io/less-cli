@@ -3,7 +3,6 @@ import axios from 'axios';
 import chalk from 'chalk';
 import FormData from 'form-data';
 import fs from 'fs';
-import os from 'os';
 import * as glob from 'glob';
 import ora from 'ora';
 import path from 'path';
@@ -40,7 +39,8 @@ function loadEnvironmentVariables(configFile, cronsPath) {
             `\nMust create the less.config file and define the follow environment variables on 'env_vars':\n  ${missingEnvVars}`,
           ),
         );
-        process.exit(1);
+        process.exitCode = 1;
+        return ;
       }
     }
   
@@ -53,7 +53,8 @@ function loadEnvironmentVariables(configFile, cronsPath) {
 
   if (!config?.hasOwnProperty('env_vars')) {
     console.error(chalk.redBright("\nKey 'env_vars' not found in the less.config file"));
-    process.exit(1);
+    process.exitCode = 1;
+    return ;
   }
 
   const keys = config.env_vars;
@@ -62,14 +63,16 @@ function loadEnvironmentVariables(configFile, cronsPath) {
   // Verifying if the less config file has env vars
   if (!keys || !keys?.length) {
     console.error(chalk.redBright(`\nEnvironment variables must be defined in 'env_vars' on less.config file`));
-    process.exit(1); 
+    process.exitCode = 1;
+    return ;
   }
 
   for (const key of keys) {
     const value = process.env[key];
     if (value === undefined) {
       console.error(chalk.redBright(`\nEnvironment variable '${key}' must be defined`));
-      process.exit(1);
+      process.exitCode = 1;
+      return ;
     }
     envVars[key] = value;
   }
@@ -100,83 +103,91 @@ async function deployProject(projectPath, projectName, envVars) {
 
   const serverUrl = 'https://less-server.chuva.io/v1/deploys';
   const socket = new WebSocket('wss://less-server.chuva.io');
+  
+  await new Promise((resolve) => {
+    socket.on('open', async () => { });
 
-  socket.on('open', async () => { });
-
-  socket.on('message', async (data) => {
-    const message = JSON.parse(data);
-
-    if (message.event === 'deploymentStatus') {
-      const statusData = message.data;
-      const { status, resources, error } = statusData;
-
-      if (status?.includes('Building...')) {
-        spinner.stop();
-      }
-
-      console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(status));
-
-      if (status?.includes('Deploy completed')) {
-        console.log(chalk.yellowBright('[less-cli]'), '🇨🇻');
-      }
-
-      if (resources) {
-        const { apis, websockets } = resources;
-
-        if (apis?.length) {
-          console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright('\t- API URLs'));
-          apis.forEach(api => {
-            console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(`\t\t- ${api.api_name}: ${api.url}`));
-          });
+    socket.on('message', async (data) => {
+      const message = JSON.parse(data);
+  
+      if (message.event === 'deploymentStatus') {
+        const statusData = message.data;
+        const { status, resources, error } = statusData;
+  
+        if (status?.includes('Building...')) {
+          spinner.stop();
         }
-
-        if (websockets?.length) {
-          console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright('\t- WEBSOCKET URLs'));
-          websockets.forEach(websocket => {
-            console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(`\t\t- ${websocket.api_name}: ${websocket.url}`));
-          });
+  
+        console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(status));
+  
+        if (status?.includes('Deploy completed')) {
+          console.log(chalk.yellowBright('[less-cli]'), '🇨🇻');
         }
-
-        socket.close();
-        process.exit(0);
-      }
-
-      if (error) {
-        socket.close();
-        process.exit(1); // Non-success exit code for failure
-      }
-    }
-
-    if (message.event === 'conectionInfo') {
-      connectionId = message.data?.connectionId;
-      try {
-        const formData = new FormData();
-        formData.append('zipFile', fs.createReadStream(tempZipFilename));
-        formData.append('env_vars', JSON.stringify(envVars));
-        formData.append('project_name', JSON.stringify(projectName));
-
-        const LESS_TOKEN = await get_less_token();
-
-        const headers = {
-          Authorization: `Bearer ${LESS_TOKEN}`,
-          'connection_id': connectionId,
-          ...formData.getHeaders(),
-        };
-
-        const response = await axios.post(serverUrl, formData, { headers });
-
-        if (response.status === 202) {
-          return response.data;
+  
+        if (resources) {
+          const { apis, websockets } = resources;
+  
+          if (apis?.length) {
+            console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright('\t- API URLs'));
+            apis.forEach(api => {
+              console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(`\t\t- ${api.api_name}: ${api.url}`));
+            });
+          }
+  
+          if (websockets?.length) {
+            console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright('\t- WEBSOCKET URLs'));
+            websockets.forEach(websocket => {
+              console.log(chalk.yellowBright('[less-cli]'), chalk.greenBright(`\t\t- ${websocket.api_name}: ${websocket.url}`));
+            });
+          }
+  
+          socket.close();
+          resolve();
+          return ;
         }
-      } catch (error) {
-        spinner.stop();
-        console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Deployment failed');
-        socket.close();
-        process.exit(1); // Non-success exit code for failure
-      } finally {
-        fs.unlinkSync(tempZipFilename);
+  
+        if (error) {
+          socket.close();
+          process.exitCode = 1; // Non-success exit code for failure
+          resolve();
+          return ;
+        }
       }
-    }
+  
+      if (message.event === 'conectionInfo') {
+        connectionId = message.data?.connectionId;
+        try {
+          const formData = new FormData();
+          formData.append('zipFile', fs.createReadStream(tempZipFilename));
+          formData.append('env_vars', JSON.stringify(envVars));
+          formData.append('project_name', JSON.stringify(projectName));
+  
+          const LESS_TOKEN = await get_less_token();
+  
+          const headers = {
+            Authorization: `Bearer ${LESS_TOKEN}`,
+            'connection_id': connectionId,
+            ...formData.getHeaders(),
+          };
+  
+          const response = await axios.post(serverUrl, formData, { headers });
+  
+          if (response.status === 202) {
+            return response.data;
+          }
+        } catch (error) {
+          spinner.stop();
+          console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Deployment failed');
+          socket.close();
+          process.exitCode = 1; // Non-success exit code for failure
+        } finally {
+          if (process.exitCode && process.exitCode !== 0) {
+            return ;
+          }
+          fs.unlinkSync(tempZipFilename);
+        }
+      }
+    });
   });
 }
 
@@ -188,6 +199,10 @@ export default async function deploy(projectName) {
     const configFile = path.join(currentWorkingDirectory, 'less.config');
     const cronsDir = path.join(currentWorkingDirectory, 'less', 'crons');
     const envVars = loadEnvironmentVariables(configFile, cronsDir);
+
+    if (!envVars) {
+      return ;
+    }
 
     verify_auth_token()
     validate_project_name(projectName)

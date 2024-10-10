@@ -42,74 +42,84 @@ async function deployProject(projectPath, projectName, envVars) {
   const serverUrl = 'https://less-server.chuva.io/v1/deploy-statics';
   const socket = new WebSocket('wss://less-server.chuva.io');
 
-  socket.on('open', async () => { });
+  await new Promise((resolve) =>{
+    socket.on('open', async () => { });
 
-  socket.on('message', async (data) => {
-    const message = JSON.parse(data);
-
-    if (message.event === 'deploymentStatus') {
-      const statusData = message.data;
-      const { status, resources, error } = statusData;
-
-      if (status?.includes('Building...')) {
-        spinner.stop();
-      }
-
-      console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright(status));
-
-      if (status?.includes('Deploy completed')) {
-        console.log(chalk.yellowBright(CLI_PREFIX), '🇨🇻');
-      }
-
-      if (resources) {
-        const { websites } = resources;
-
-        if (websites?.length) {
-          console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright('\t- Websites URLs'));
-          websites.forEach(website => {
-            console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright(`\t\t- ${website}`));
-          });
+    socket.on('message', async (data) => {
+      const message = JSON.parse(data);
+  
+      if (message.event === 'deploymentStatus') {
+        const statusData = message.data;
+        const { status, resources, error } = statusData;
+  
+        if (status?.includes('Building...')) {
+          spinner.stop();
         }
-
-        socket.close();
-        process.exit(0);
-      }
-
-      if (error) {
-        socket.close();
-        process.exit(1); // Non-success exit code for failure
-      }
-    }
-
-    if (message.event === 'conectionInfo') {
-      connectionId = message.data?.connectionId;
-      try {
-        const formData = new FormData();
-        formData.append('zipFile', fs.createReadStream(tempZipFilename));
-        formData.append('env_vars', JSON.stringify(envVars));
-        formData.append('project_name', JSON.stringify(projectName));
-
-        const LESS_TOKEN = await get_less_token();
-
-        const headers = {
-          Authorization: `Bearer ${LESS_TOKEN}`,
-          'connection_id': connectionId,
-          ...formData.getHeaders(),
-        };
-
-        const response = await axios.post(serverUrl, formData, { headers });
-
-        if (response.status === 202) {
-          return response.data;
+  
+        console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright(status));
+  
+        if (status?.includes('Deploy completed')) {
+          console.log(chalk.yellowBright(CLI_PREFIX), '🇨🇻');
         }
-      } catch (error) {
-        spinner.stop();
-        socket.close();
-        handleError('Deployment failed')
-      } finally {
-        fs.unlinkSync(tempZipFilename);
+  
+        if (resources) {
+          const { websites } = resources;
+  
+          if (websites?.length) {
+            console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright('\t- Websites URLs'));
+            websites.forEach(website => {
+              console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright(`\t\t- ${website}`));
+            });
+          }
+  
+          socket.close();
+          resolve();
+          return ;
+        }
+  
+        if (error) {
+          socket.close();
+          process.exitCode = 1; // Non-success exit code for failure
+          resolve();
+          return ;
+        }
       }
-    }
+  
+      if (message.event === 'conectionInfo') {
+        connectionId = message.data?.connectionId;
+        try {
+          const formData = new FormData();
+          formData.append('zipFile', fs.createReadStream(tempZipFilename));
+          formData.append('env_vars', JSON.stringify(envVars));
+          formData.append('project_name', JSON.stringify(projectName));
+  
+          const LESS_TOKEN = await get_less_token();
+  
+          const headers = {
+            Authorization: `Bearer ${LESS_TOKEN}`,
+            'connection_id': connectionId,
+            ...formData.getHeaders(),
+          };
+  
+          const response = await axios.post(serverUrl, formData, { headers });
+  
+          if (response.status === 202) {
+            return response.data;
+          }
+        } catch (error) {
+          spinner.stop();
+          socket.close();
+          resolve();
+          handleError('Deployment failed')
+        } finally {
+          if (process.exitCode && process.exitCode !== 0) {
+            resolve();
+            return ;
+          }
+          fs.unlinkSync(tempZipFilename);
+        }
+      }
+    });
   });
 }
 
