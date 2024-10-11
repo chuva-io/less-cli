@@ -20,47 +20,49 @@ async function _create_custom_domain({
   let connectionId;
 
   const socket = new WebSocket('wss://less-server.chuva.io');
+  await new Promise((resolve) => {
+    socket.on('open', async () => { });
 
-  socket.on('open', async () => { });
-
-  socket.on('message', async (data) => {
-    const message = JSON.parse(data);
-
-    if (message.event === 'conectionInfo') {
-      connectionId = message.data?.connectionId;
-
-      const LESS_TOKEN = await get_less_token();
-
-      try {
-        const headers = {
-          Authorization: `Bearer ${LESS_TOKEN}`,
-          'connection_id': connectionId,
-        };
-
-        const response = await api.post(
-          '/v1/domains/static',
-          {
-            project_name: projectName,
-            static_name: staticName,
-            custom_domain: customDomain
-          },
-          { headers }
-        );
-
-        console.log();
-        console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright('\t- NS Records'));
-        console.table({ ...response.data });
-
-        spinner.stop();
-        socket.close();
-        process.exit();
-      } catch (error) {
-        spinner.stop();
-        handleError('Something went wrong');
-        socket.close();
-        process.exit(1); // Non-success exit code for failure
+    socket.on('message', async (data) => {
+      const message = JSON.parse(data);
+  
+      if (message.event === 'conectionInfo') {
+        connectionId = message.data?.connectionId;
+  
+        const LESS_TOKEN = await get_less_token();
+  
+        try {
+          const headers = {
+            Authorization: `Bearer ${LESS_TOKEN}`,
+            'connection_id': connectionId,
+          };
+  
+          const response = await api.post(
+            '/v1/domains/static',
+            {
+              project_name: projectName,
+              static_name: staticName,
+              custom_domain: customDomain
+            },
+            { headers }
+          );
+  
+          console.log();
+          console.log(chalk.yellowBright(CLI_PREFIX), chalk.greenBright('\t- NS Records'));
+          console.table({ ...response.data });
+  
+          spinner.stop();
+          socket.close();
+          resolve();
+        } catch (error) {
+          spinner.stop();
+          handleError('Something went wrong');
+          socket.close();
+          process.exitCode = 1; // Non-success exit code for failure
+          resolve();
+        }
       }
-    }
+    });
   });
 }
 
