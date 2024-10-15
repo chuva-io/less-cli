@@ -9,7 +9,6 @@ import path from 'path';
 import WebSocket from 'ws';
 import yaml from 'js-yaml';
 
-import validate_project_folder from '../helpers/validations/validate_project_folder.js';
 import { get_less_token, verify_auth_token } from '../helpers/credentials.js';
 import validate_project_name from '../helpers/validations/validate_project_name.js';
 import handleError from '../helpers/handle_error.js';
@@ -206,7 +205,6 @@ export default async function deploy(projectName) {
 
     verify_auth_token()
     validate_project_name(projectName)
-    validate_project_folder(currentWorkingDirectory)
 
     await deployProject(currentWorkingDirectory, projectName, envVars);
   } catch (error) {

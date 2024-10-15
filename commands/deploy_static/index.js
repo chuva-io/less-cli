@@ -11,8 +11,6 @@ import WebSocket from 'ws';
 import { get_less_token, verify_auth_token } from '../helpers/credentials.js';
 import handleError from '../helpers/handle_error.js';
 import validate_project_name from '../helpers/validations/validate_project_name.js';
-import validate_project_folder from '../helpers/validations/validate_project_folder.js';
-
 
 const spinner = ora({ text: '' });
 
@@ -130,7 +128,6 @@ export default async function deploy(projectName) {
     const currentWorkingDirectory = process.cwd();
     verify_auth_token();
     validate_project_name(projectName);
-    validate_project_folder(currentWorkingDirectory);
 
     await deployProject(currentWorkingDirectory, projectName, {});
   } catch (error) {
