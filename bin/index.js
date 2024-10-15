@@ -22,6 +22,8 @@ import create_custom_domain from '../commands/create_custom_domain/index.js';
 import fetch_and_log_function_logs from '../commands/projects/logs/fetch_and_log_function_logs.js';
 import delete_project from '../commands/projects/delete.js';
 import check_for_updates from '../utils/check_for_updates.js';
+import directory_has_less_folder from '../utils/directory_has_less_folder.js';
+import chalk from 'chalk';
 
 const program = new Command();
 
@@ -39,7 +41,22 @@ program
     .description('CLI to interact with Less')
     .version(version)
     .usage('[COMMAND]')
-    .hook('postAction', async () => {
+    .hook('preAction', (command) => {
+        if(!directory_has_less_folder() && command.args[0] === 'deploy') {         
+            console.log(
+                chalk.red(`ERROR: There is no 'less' folder in the current directory. 
+In order to deploy your project navigate to the correct directory and try again.`),
+            );
+            process.exit(1);
+        }
+    })
+    .hook('postAction', async (command) => {
+        if(!directory_has_less_folder() && command.args[0] !== 'deploy') { 
+            console.log(
+                chalk.yellowBright('WARNING: You are using Less commands in a directory with no `less` folder.\n'), 
+                
+            );
+        } 
         await check_for_updates();
         process.exit(process.exitCode);
     });
