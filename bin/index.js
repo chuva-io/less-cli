@@ -24,6 +24,7 @@ import delete_project from '../commands/projects/delete.js';
 import check_for_updates from '../utils/check_for_updates.js';
 import directory_has_less_folder from '../utils/directory_has_less_folder.js';
 import chalk from 'chalk';
+import validate_project_structure from '../commands/helpers/validations/validate_project_structure/index.js';
 
 const program = new Command();
 
@@ -54,7 +55,6 @@ In order to deploy your project navigate to the correct directory and try again.
         if(!directory_has_less_folder() && command.args[0] !== 'deploy') { 
             console.log(
                 chalk.yellowBright('WARNING: You are using Less commands in a directory with no `less` folder.\n'), 
-                
             );
         } 
         await check_for_updates();
@@ -71,8 +71,14 @@ program
             return;
         };
 
+        try {
+            validate_project_structure(process.cwd());
+        } catch (error) {
+            console.log(chalk.yellowBright('[less-cli]'), chalk.redBright('ERROR:', error.message));
+            process.exit(1);
+        }
+
         await deploy(project_name);
-    
     })
     .hook('postAction',(command) => {
         if (!process.exitCode && !command.opts().static) {
