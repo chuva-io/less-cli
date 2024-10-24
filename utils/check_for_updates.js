@@ -21,7 +21,7 @@ async function check_for_updates() {
     const latest_version = response.data[0].name.replace('v', '');
 
     if (latest_version !== version) {
-      console.log(chalk.green(`You are using version ${version} of the Less CLI but the latest version is ${latest_version}.\nPlease update to have the best experience possible and take advantage of the latest features.`));
+      console.log(chalk.yellowBright(`WARNING: You are using version ${version} of the Less CLI but the latest version is ${latest_version}.\nPlease update to have the best experience possible and take advantage of the latest features.`));
     }
   } catch (error) {
       return ;
