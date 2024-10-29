@@ -25,6 +25,7 @@ import check_for_updates from '../utils/check_for_updates.js';
 import directory_has_less_folder from '../utils/directory_has_less_folder.js';
 import chalk from 'chalk';
 import validate_project_structure from '../commands/helpers/validations/validate_project_structure/index.js';
+import get_login_profile from '../commands/login_profile/get_login_profile.js';
 
 const program = new Command();
 
@@ -126,6 +127,11 @@ program
     .option('-u, --user <email>', 'User email address')
     .option('-p, --password <password>', 'User password', '*')
     .action(create_session);
+
+program
+    .command('aws-access')
+    .description('Access your Less-managed AWS account directly via the AWS console.')
+    .action(get_login_profile);
 
 program
     .command('delete <project_name>')
