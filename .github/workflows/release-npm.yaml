@@ -1,8 +1,7 @@
 name: Deploy to NPM
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - main
 
@@ -11,7 +10,6 @@ permissions:
 
 jobs:
   publish:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
