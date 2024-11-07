@@ -26,6 +26,10 @@ import directory_has_less_folder from '../utils/directory_has_less_folder.js';
 import chalk from 'chalk';
 import validate_project_structure from '../commands/helpers/validations/validate_project_structure/index.js';
 import get_login_profile from '../commands/login_profile/get_login_profile.js';
+import run_app from '../commands/local/run_app/index.js';
+import build from '../commands/local/build/index.js';
+import delete_local_project from '../commands/local/delete/index.js';
+import list_local_projects from '../commands/local/list_projects/index.js';
 
 const program = new Command();
 
@@ -44,7 +48,10 @@ program
     .version(version)
     .usage('[COMMAND]')
     .hook('preAction', (command) => {
-        if(!directory_has_less_folder() && command.args[0] === 'deploy') {         
+        if(
+            !directory_has_less_folder()
+            && ['deploy', 'build'].includes(command.args[0])
+        ) {
             console.log(
                 chalk.red(`ERROR: There is no 'less' folder in the current directory. 
 In order to deploy your project navigate to the correct directory and try again.`),
@@ -61,7 +68,7 @@ In order to deploy your project navigate to the correct directory and try again.
         await check_for_updates();
         process.exit(process.exitCode);
     });
-       
+
 program
     .command('deploy <project_name>')
     .description('Deploy your less project.')
@@ -99,7 +106,14 @@ program
 program
     .command('list')
     .description('List all projects.')
-    .action(get_all)
+    .option('--local', 'Flag to only list the projects that are hosted locally.')
+    .action(async (options) => {
+        if (options.local) {
+            list_local_projects();
+            return;
+        }
+        await get_all();
+    })
     .command('resources <project_id>')
     .description('List resources by project_id')
     .action(get_by_id);
@@ -135,8 +149,35 @@ program
 
 program
     .command('delete <project_name>')
+    .option('--local', 'Flag to specify that the project to delete is hosted locally.')
     .description('Delete your project. Example usage: less-cli delete hello-api')
-    .action(delete_project);
+    .action(async (project_name, options) => {
+        if (options.local) {
+            await delete_local_project(project_name);
+            return;
+        }
+        await delete_project(project_name);
+    });
+
+
+program
+    .command('build <project_name>')
+    .description('Build your Less project locally for offline development.')
+    .action(async (project_name) => {
+        try {
+            validate_project_structure(process.cwd());
+        } catch (error) {
+            console.log(chalk.yellowBright('[less-cli]'), chalk.redBright('ERROR:', error.message));
+            process.exit(1);
+        }
+
+        await build(project_name);
+    });
+
+program
+    .command('run <project-name>')
+    .description('Run your Less project locally. You can create a build using the `build <project-name>` command.')
+    .action(run_app);
 
 const create = program
     .command('create')
