@@ -17,6 +17,7 @@ import build_cloud_functions from '../helpers/build_cloud_functions/index.js';
 import build_less_dependencies from '../helpers/build_less_dependencies/index.js';
 import build_sqlite_database_dependency from '../helpers/build_sqlite_database_dependency/index.js';
 import create_dotenv_based_on_less_config from '../helpers/create_dotenv_based_on_less_config/index.js';
+import get_yarn_path from '../helpers/get_yarn_path/index.js';
 
 import { APP_CONFIG_FILE, LESS_LOCAL_FLAG, LESS_LOCAL_INFO_FLAG, LESS_LOCAL_ERROR_FLAG } from '../constants/index.js'
 
@@ -181,10 +182,12 @@ console.log(require('./${APP_CONFIG_FILE}').app_running_flag);
 
     spinner.text = `${chalk.gray(`${LESS_LOCAL_FLAG} Installing packages...`)}📦`;
     spinner.start();
+
+    const yarn_path = get_yarn_path();
     await new Promise((resolve, reject) => exec(
       `cd ${config.project_build_path}
-yarn
-${config.shared.length ? `yarn upgrade ${config.shared.join(' ')}` : ''}`,
+${yarn_path}
+${config.shared.length ? `${yarn_path} upgrade ${config.shared.join(' ')}` : ''}`,
       (error, stdout, stderr) => {
         if (error) {
           reject(error.toString('utf-8'));
@@ -200,6 +203,7 @@ ${config.shared.length ? `yarn upgrade ${config.shared.join(' ')}` : ''}`,
       chalk.greenBright('Packages installed with success ✅')
     );
   } catch(error) {
+    console.log('Error:', error);
     process.exitCode = 1;
   }
 };

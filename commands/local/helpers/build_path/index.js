@@ -10,7 +10,7 @@ export const get = () => {
   );
 
   if (!fs.existsSync(builds_path)) {
-    fs.mkdirSync(builds_path);
+    fs.mkdirSync(builds_path, { recursive: true });
   }
 
   return builds_path;
