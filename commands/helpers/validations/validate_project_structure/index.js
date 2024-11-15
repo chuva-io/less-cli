@@ -12,7 +12,16 @@ import { ResourceHandlerNotFoundException, ResourceNameInvalidException } from '
 
 export default (project_path) => {
   const project_less_path = path.join(project_path, 'less');
-  const resources_types = ['apis', 'crons', 'shared', 'topics', 'sockets', 'functions', 'external_topics'];
+  const resources_types = [
+    'apis',
+    'crons',
+    'shared',
+    'topics',
+    'sockets',
+    'statics',
+    'functions',
+    'external_topics'
+  ];
 
   const less_allowed_folders_message = 
     `The "less" folder should only contain folders that match the following:${
