@@ -1,6 +1,6 @@
 {
   "name": "@chuva.io/less-cli",
-  "version": "1.0.0-beta.40",
+  "version": "1.0.0-beta.41",
   "description": "`less-cli` is a CLI tool that allows you to deploy your Less projects to AWS while providing several other tools to facilitate your interaction with Less.",
   "author": "Chuva, LLC",
   "license": "Apache-2.0",
@@ -49,7 +49,8 @@
     "ora": "^7.0.1",
     "read-yaml-file": "2.1.0",
     "sqlite3": "5.1.7",
-    "ws": "^8.13.0"
+    "ws": "^8.13.0",
+    "yarn": "1.22.22"
   },
   "main": "bin/index.js",
   "bugs": {

@@ -226,23 +226,25 @@ const build = async (config) => {
       'index.js'
     );
 
-    const topics_db_model = 
-      (await import(db_dependency_path))[config.less_sqlite_tables.topics.model];
-    
-    const client = new topics_db_model();
-    
-    const items = await client.getAll();
-    
-    if (items.length) {
-      await client.update({
-        columns: { retrying: false },
-        where: { 
-          id: { 'in': items.map(item => item.id) } 
-        } 
-      });
+    if (fs.existsSync(db_dependency_path)) {
+      const topics_db_model = 
+        (await import(db_dependency_path))[config.less_sqlite_tables.topics.model];
+      
+      const client = new topics_db_model();
+      
+      const items = await client.getAll();
+      
+      if (items.length) {
+        await client.update({
+          columns: { retrying: false },
+          where: { 
+            id: { 'in': items.map(item => item.id) } 
+          } 
+        });
+      }
+      
+      client.close();
     }
-    
-    client.close();
   }
 
   const less_sqlite = path.resolve(
