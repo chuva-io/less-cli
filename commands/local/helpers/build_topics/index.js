@@ -33,7 +33,7 @@ const topic_handler = async (topic_name, topic_data) => {
       } catch(error) {
         const message_id = randomUUID();
         console.log(
-          \`#less-local-error-tag#Failed to process topic '\${topic_name}' processor '\${topic_processors_names[index]}.The message has been stored with ID '\${message_id}' for later processing. Error: <#\${error}#>#less-local-error-tag#'\`
+          \`#less-local-error-tag#Failed to process topic '\${topic_name}' processor '\${topic_processors_names[index]}.The message has been stored for later processing. Error: <#\${error}#>#less-local-error-tag#'\`
         );
 
         const topics = new #topics-table-module#();
@@ -83,11 +83,11 @@ const process_topic_queue = async (data, db_client) => {
     await db_client.delete({ id: data.id });
 
     console.log(
-      \`#less-local-info-tag#Processor "\${processor_name}" from topic "\${topic_name}" with message id "\${data.id}" was successfully processed after \${data.times_retried + 1} retries.#less-local-info-tag#\`
+      \`#less-local-info-tag#Processor "\${processor_name}" from topic "\${topic_name}" was successfully processed after \${data.times_retried + 1} retries.#less-local-info-tag#\`
     );
   } catch(error) {
     console.log(
-      \`#less-local-error-tag#Processor "\${processor_name}" from topic "\${topic_name}" with message id "\${data.id}" failed to process after \${data.times_retried + 1} retries. Error: <#\${error}#>#less-local-error-tag#\`
+      \`#less-local-error-tag#Processor "\${processor_name}" from topic "\${topic_name}" failed to process after \${data.times_retried + 1} retries. Error: <#\${error}#>#less-local-error-tag#\`
     );
 
     await db_client.update({
