@@ -15,6 +15,8 @@ const run_app = async (config) => {
     const app = spawn('node', ['app.js'], { cwd: config.project_build_path });
 
     app.stdout.on('data', (data) => {
+      data = data.toString('utf-8').slice(0, -1);
+
       if (data.includes(app_config.app_running_flag)) {
         spinner.stop();
         console.log(less_local_flag, chalk.greenBright(`App "${config.project_build_path.split('/').pop()}" is running ✅`))
@@ -39,7 +41,7 @@ const run_app = async (config) => {
       }
 
       if (data.includes(config.less_local_error_flag) || data.includes(config.less_local_info_flag)) {
-        let data_string = data.toString('utf-8');
+        let data_string = data;
         const errors = data_string.match(
           new RegExp(`${config.less_local_error_flag}.*${config.less_local_error_flag}`, 'g')
         );
@@ -54,20 +56,20 @@ const run_app = async (config) => {
             const error_message = error.match(/<\#(.*)\#>/)[1];
             error = error.replace(error_message, '');
 
-            console.log(chalk.redBright(
+            console.error(chalk.redBright(
               error
                 .replace('<##>', '')
                 .replace(error_message, '')
                 .replaceAll(config.less_local_error_flag, '')
             ));
-            console.log(error_message, '\n');
+            console.error(error_message);
           });
         }
 
         if (infos) {
           infos.forEach(info => {
             data_string = data_string.replaceAll(info, '');
-            console.log(chalk.greenBright(info.replaceAll(config.less_local_info_flag, '')), '\n');
+            console.info(chalk.greenBright(info.replaceAll(config.less_local_info_flag, '')));
           });
         }
 
@@ -75,7 +77,7 @@ const run_app = async (config) => {
         return;
       }
       
-      console.log(`${data}`.replace('\n', ''));
+        console.log(data);
     });
 
     app.stderr.on('data', (data) => {
