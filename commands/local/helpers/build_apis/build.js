@@ -139,9 +139,14 @@ const route_handler_code = `const route_handler = (handler) => async (req, res, 
 
     req.params = { ...req.options.params };
     req.query = { ...req.options.query };
+    
+    const _res = { headers: {} };
+    const response = await handler(req, _res, next);
+    
+    if (!response && Object.keys(_res.headers).length) {
+      res.set(_res.headers);
+    }
 
-    const response = await handler(req, {}, next);
-  
     if (response) {
       if (typeof response.body === 'object') {
         console.log("The body response cannot be an object");
