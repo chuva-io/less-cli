@@ -21,9 +21,7 @@ const publish_kvs_event = async (new_value, topic, event) => {
   };
 
   if (event === events.created || event === events.updated) {
-    data.new_value = typeof new_value.value  !== 'string'
-      ? JSON.parse(new_value.value)
-      : new_value.value;
+    data.new_value = JSON.parse(new_value.value);
   }
 
   if (event === events.deleted || event === events.updated) {
