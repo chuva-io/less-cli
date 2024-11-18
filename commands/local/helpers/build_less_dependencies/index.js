@@ -67,7 +67,7 @@ const kvs_set = async (key, value, ttl) => {
       throw new Error('Error: The param "ttl" must be of type number');
     }
 
-    date = new Date(Date.now() + ttl).toISOString();
+    date = new Date(Date.now() + (ttl * 1000)).toISOString();
   }
 
   const params = { id: key, value: JSON.stringify(value) };
