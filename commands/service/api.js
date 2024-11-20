@@ -1,7 +1,8 @@
 import axios from 'axios';
+import CONFIG from '../../utils/config.js';
 
 const api = axios.create({
-  baseURL: 'https://less-server.chuva.io/',
+  baseURL: CONFIG.LESS_SERVER_BASE_URL
 });
 
 export default api;

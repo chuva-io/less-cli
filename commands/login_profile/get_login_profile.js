@@ -1,6 +1,5 @@
 import axios from 'axios';
 import chalk from 'chalk';
-import config from '../../utils/config.js';
 
 import { get_less_token, verify_auth_token } from '../helpers/credentials.js';
 import create_server_url from '../helpers/create_server_url.js';

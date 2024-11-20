@@ -12,6 +12,7 @@ import { get_less_token, verify_auth_token } from '../helpers/credentials.js';
 import handleError from '../helpers/handle_error.js';
 import validate_project_name from '../helpers/validations/validate_project_name.js';
 import create_server_url from '../helpers/create_server_url.js';
+import CONFIG from '../../utils/config.js';
 
 const spinner = ora({ text: '' });
 
@@ -38,8 +39,7 @@ async function deployProject(organization_id, projectPath, projectName, envVars)
 
   await zip.writeZipPromise(tempZipFilename);
 
-  const serverUrl = create_server_url(organization_id, 'deploy-statics');
-  const socket = new WebSocket('wss://less-server.chuva.io');
+  const socket = new WebSocket(CONFIG.LESS_SERVER_SOCKET_URL);
 
   await new Promise((resolve) =>{
     socket.on('open', async () => { });
@@ -100,7 +100,8 @@ async function deployProject(organization_id, projectPath, projectName, envVars)
             ...formData.getHeaders(),
           };
   
-          const response = await axios.post(serverUrl, formData, { headers });
+          const less_static_deployment_route = create_server_url(organization_id, 'deploy-statics');
+          const response = await axios.post(less_static_deployment_route, formData, { headers });
   
           if (response.status === 202) {
             return response.data;
