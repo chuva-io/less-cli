@@ -10,7 +10,7 @@ import validate_cloud_functions from './validate_cloud_functions/index.js';
 import validate_external_topics from './validate_external_topics/index.js';
 import { ResourceHandlerNotFoundException, ResourceNameInvalidException } from './errors/index.js';
 
-export default (project_path) => {
+export default async (project_path) => {
   const project_less_path = path.join(project_path, 'less');
   const resources_types = ['apis', 'crons', 'shared', 'topics', 'sockets', 'functions', 'external_topics'];
 
@@ -48,7 +48,7 @@ export default (project_path) => {
   }
 
   validate_apis(project_less_path);
-  validate_crons(project_less_path);
+  await validate_crons(project_less_path);
   validate_shared(project_less_path);
   validate_topics(project_less_path);
   validate_sockets(project_less_path);
