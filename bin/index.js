@@ -80,7 +80,7 @@ program
         };
 
         try {
-            validate_project_structure(process.cwd());
+            await validate_project_structure(process.cwd());
         } catch (error) {
             console.log(chalk.yellowBright('[less-cli]'), chalk.redBright('ERROR:', error.message));
             process.exit(1);
@@ -165,7 +165,7 @@ program
     .description('Build your Less project locally for offline development.')
     .action(async (project_name) => {
         try {
-            validate_project_structure(process.cwd());
+            await validate_project_structure(process.cwd());
         } catch (error) {
             console.log(chalk.yellowBright('[less-cli]'), chalk.redBright('ERROR:', error.message));
             process.exit(1);
