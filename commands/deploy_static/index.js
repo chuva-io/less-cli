@@ -11,12 +11,13 @@ import WebSocket from 'ws';
 import { get_less_token, verify_auth_token } from '../helpers/credentials.js';
 import handleError from '../helpers/handle_error.js';
 import validate_project_name from '../helpers/validations/validate_project_name.js';
+import create_server_url from '../helpers/create_server_url.js';
 
 const spinner = ora({ text: '' });
 
 const CLI_PREFIX = '[less-cli]';
 
-async function deployProject(projectPath, projectName, envVars) {
+async function deployProject(organization_id, projectPath, projectName, envVars) {
   let connectionId;
   const tempZipFilename = 'temp_project.zip';
   const zip = new AdmZip();
@@ -37,7 +38,7 @@ async function deployProject(projectPath, projectName, envVars) {
 
   await zip.writeZipPromise(tempZipFilename);
 
-  const serverUrl = 'https://less-server.chuva.io/v1/deploy-statics';
+  const serverUrl = create_server_url(organization_id, 'deploy-statics');
   const socket = new WebSocket('wss://less-server.chuva.io');
 
   await new Promise((resolve) =>{
@@ -121,7 +122,7 @@ async function deployProject(projectPath, projectName, envVars) {
   });
 }
 
-export default async function deploy(projectName) {
+export default async function deploy(organization_id, projectName) {
   spinner.start(`${CLI_PREFIX} Connecting to the Less Server... ⚙️`);
   spinner.start();
   try {
@@ -129,7 +130,7 @@ export default async function deploy(projectName) {
     verify_auth_token();
     validate_project_name(projectName);
 
-    await deployProject(currentWorkingDirectory, projectName, {});
+    await deployProject(organization_id, currentWorkingDirectory, projectName, {});
   } catch (error) {
     spinner.stop();
     handleError(error.message)

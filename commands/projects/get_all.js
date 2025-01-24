@@ -1,13 +1,13 @@
 import axios from 'axios';
 import chalk from 'chalk';
-import config from '../../utils/config.js';
+import create_server_url from '../helpers/create_server_url.js';
 import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
 
-export default async function get_all() {
+export default async function get_all(organization_id) {
     await verify_auth_token();
 
-    const serverUrl = `${config.SERVER_URL}/v1/projects`;
-
+    let serverUrl = create_server_url(organization_id, 'projects');
+    
     try {
         const LESS_TOKEN = await get_less_token();
         const headers = {

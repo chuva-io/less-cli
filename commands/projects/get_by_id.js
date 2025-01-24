@@ -1,9 +1,10 @@
 import axios from 'axios';
 import chalk from 'chalk';
-import config from '../../utils/config.js';
 import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
+import create_server_url from '../helpers/create_server_url.js';
 
-export default async function get_by_id(project_name) {
+export default async function get_by_id(project_name, _, command) {
+    const organization_id = command.parent.opts().organization;
     if (!/^[a-zA-Z][-a-zA-Z0-9]*$/.test(project_name)) {
         console.log(chalk.redBright('Error:'), 'The project_name must satisfy regular expression pattern: [a-zA-Z][-a-zA-Z0-9]');
         process.exitCode = 1;
@@ -11,8 +12,7 @@ export default async function get_by_id(project_name) {
     }
 
     await verify_auth_token();
-
-    const serverUrl = `${config.SERVER_URL}/v1/projects/${project_name}`;
+    const serverUrl = create_server_url(organization_id, `projects/${project_name}`);
 
     try {
         const LESS_TOKEN = await get_less_token();
