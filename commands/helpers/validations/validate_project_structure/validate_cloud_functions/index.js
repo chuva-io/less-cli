@@ -33,7 +33,7 @@ export default (project_less_path) => {
       !cloud_function_items.length
       || !cloud_function_items.find((item) => (
         fs.statSync(path.join(cloud_functions_path, cloud_function, item)).isFile()
-        && /^(index\.js|__init__\.py)$/.test(item)
+        && /^(index\.js|index\.ts|__init__\.py)$/.test(item)
       ))
     ) {
       throw new ResourceHandlerNotFoundException(

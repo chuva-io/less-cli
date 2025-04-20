@@ -12,7 +12,7 @@ const run_app = async (config) => {
   const spinner = ora(chalk.gray(LESS_LOCAL_FLAG + 'Running app...'));
   spinner.start();
   await new Promise((resolve) => {
-    const app = spawn('node', ['app.js'], { cwd: config.project_build_path });
+    const app = spawn('ts-node', ['app.js'], { cwd: config.project_build_path });
 
     app.stdout.on('data', (data) => {
       data = data.toString('utf-8').slice(0, -1);

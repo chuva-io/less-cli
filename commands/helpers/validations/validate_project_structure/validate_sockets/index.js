@@ -60,7 +60,7 @@ export default (project_less_path) => {
         .readdirSync(channel_path)
         .filter(element =>
           fs.statSync(path.join(channel_path, element)).isFile()
-          && /^(index\.js|__init__\.py)$/.test(element)
+          && /^(index\.js|index\.ts|__init__\.py)$/.test(element)
         );
 
       if (!channel_handler.length) {

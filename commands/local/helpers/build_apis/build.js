@@ -219,7 +219,7 @@ const construct_api_routes = (config, data) => {
   Object.keys(api_routes_mapped).forEach(api_route_mapped => {
     const [route] = api_route_mapped.split('.');
 
-    if (/^(get|post|put|patch|delete)\.(js|py)$/.test(api_route_mapped)) {
+    if (/^(get|post|put|patch|delete)\.(js|ts|py)$/.test(api_route_mapped)) {
       const stack_path_splited = stack_path.split('/');
       stack_path_splited.shift();
 
@@ -231,7 +231,8 @@ const construct_api_routes = (config, data) => {
 
       const method_handler = `${route}_handler`;
 
-      if (api_route_mapped.endsWith('.js')) {
+      if (api_route_mapped.endsWith('.js') || api_route_mapped.endsWith('.ts')) {
+        const file_extension = api_route_mapped.split('.').pop();
         const build_route_path =  path.resolve(
           less_built_api_path,
           stack_path
@@ -241,7 +242,7 @@ const construct_api_routes = (config, data) => {
         fs.writeFileSync(
           path.resolve(
             build_route_path,
-            `${method_handler}.js`
+            `${method_handler}.${file_extension}`
           ),
           project_route_method_code
         );
