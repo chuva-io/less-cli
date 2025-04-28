@@ -1,7 +1,8 @@
 import chalk from 'chalk';
-import api from '../../service/api.js'
 import { verify_auth_token, get_less_token } from '../../helpers/credentials.js';
 import handle_error from '../../helpers/handle_error.js';
+import create_server_url from '../../helpers/create_server_url.js';
+import axios from 'axios';
 
 /**
  * Validates the options object to ensure it contains the required properties.
@@ -27,7 +28,8 @@ function validateOptions(options) {
  * @param {string} options.project - The project name.
  * @param {string} options.function - The path of the resource.
  */
-export default async function fetch_and_log_function_logs(options) {
+export default async function fetch_and_log_function_logs(options, command) {
+    const organization_id = command.parent.opts().organization;
     validateOptions(options);
 
     const { project, function: function_id } = options;
@@ -45,7 +47,8 @@ export default async function fetch_and_log_function_logs(options) {
             .replace(/\/(index\.js|__init__\.py)$/, '')
             .replace(/\.(js|py)$/, '');
 
-        const { status, data } = await api.get(`/v1/projects/${project}/resources/${encodeURIComponent(resource_id)}/logs`, { headers });
+        const serverUrl = create_server_url(organization_id, `projects/${project}/resources/${encodeURIComponent(resource_id)}/logs`);
+        const { status, data } = await axios.get(serverUrl, { headers });
 
         if (status === 200) {
             if (!data || data.length === 0) {

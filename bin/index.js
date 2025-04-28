@@ -46,6 +46,7 @@ program
     .name('less-cli')
     .description('CLI to interact with Less')
     .version(version)
+    .option('-o --organization <string>', 'Organization ID')
     .usage('[COMMAND]')
     .hook('preAction', (command) => {
         if(
@@ -73,9 +74,10 @@ program
     .command('deploy <project_name>')
     .description('Deploy your less project.')
     .option('--static', 'Deploy your less static websites')
-    .action(async (project_name, options) => {
+    .action(async (project_name, options, command) => {
+        const organization_id = command.parent.opts().organization;
         if (options.static) {
-            await deploy_static(project_name);
+            await deploy_static(organization_id, project_name);
             return;
         };
 
@@ -86,7 +88,7 @@ program
             process.exit(1);
         }
 
-        await deploy(project_name);
+        await deploy(organization_id, project_name);
     })
     .hook('postAction',(command) => {
         if (!process.exitCode && !command.opts().static) {
@@ -107,12 +109,13 @@ program
     .command('list')
     .description('List all projects.')
     .option('--local', 'Flag to only list the projects that are hosted locally.')
-    .action(async (options) => {
+    .action(async (options, command) => {
+        const organization_id = command.parent.opts().organization;
         if (options.local) {
             list_local_projects();
             return;
-        }
-        await get_all();
+        }       
+        await get_all(organization_id);
     })
     .command('resources <project_id>')
     .description('List resources by project_id')
@@ -151,12 +154,13 @@ program
     .command('delete <project_name>')
     .option('--local', 'Flag to specify that the project to delete is hosted locally.')
     .description('Delete your project. Example usage: less-cli delete hello-api')
-    .action(async (project_name, options) => {
+    .action(async (project_name, options, command) => {
+        const organization_id = command.parent.opts().organization;
         if (options.local) {
             await delete_local_project(project_name);
             return;
         }
-        await delete_project(project_name);
+        await delete_project(organization_id, project_name);
     });
 
 
