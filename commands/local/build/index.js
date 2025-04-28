@@ -76,6 +76,18 @@ const deploy = async (project_name) => {
         }
       });
     }
+    else {
+      fs.mkdirSync(project_build_path, { recursive: true });
+    }
+
+    // If tsconfig.json exists add it to the build path
+    const tsconfig_path = path.resolve(project_location, 'tsconfig.json');
+    if (fs.existsSync(tsconfig_path)) {
+      fs.copyFileSync(
+        tsconfig_path,
+        path.resolve(project_build_path, 'tsconfig.json')
+      );
+    }
 
     const project_less_resources_location = path.resolve(
       project_location,

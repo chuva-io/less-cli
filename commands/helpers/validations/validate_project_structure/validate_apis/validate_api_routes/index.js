@@ -3,7 +3,7 @@ import path from 'path';
 import { ResourceNameInvalidException, ResourceHandlerNotFoundException } from '../../errors/index.js';
 import validate_resource_instance_name from '../../../validate_resources_instances_names.js';
 
-const http_method_extensions = ['js', 'py', 'rs'];
+const http_method_extensions = ['js', 'ts', 'py', 'rs'];
 const http_methods = ['get', 'post', 'put', 'patch', 'delete'];
 
 const validate_route_method_handler = (method_handler_name) =>

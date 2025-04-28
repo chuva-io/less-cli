@@ -83,7 +83,7 @@ ${validate_resource_instance_name.regexConstrainMessage}`
           .readdirSync(processor_path)
           .filter(element =>
             fs.statSync(path.join(processor_path, element)).isFile()
-            && /^(index\.js|__init__\.py)$/.test(element)
+            && /^(index\.js|index\.ts|__init__\.py)$/.test(element)
           );
 
         if (!processor_handler.length) {

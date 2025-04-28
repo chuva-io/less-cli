@@ -31,7 +31,7 @@ export default (project_less_path) => {
       !cron_items.length
       || !cron_items.find((item) => (
         fs.statSync(path.join(crons_path, cron, item)).isFile()
-        && /^(index\.js|__init__\.py)$/.test(item)
+        && /^(index\.js|index\.ts|__init__\.py)$/.test(item)
       ))
     ) {
       throw new ResourceHandlerNotFoundException(
