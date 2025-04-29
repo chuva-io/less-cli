@@ -6,8 +6,8 @@ import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
 export default async function get_all(organization_id) {
     await verify_auth_token();
 
-    let serverUrl = create_server_url(organization_id, 'projects');
-    
+    const serverUrl = create_server_url(organization_id, 'projects');
+
     try {
         const LESS_TOKEN = await get_less_token();
         const headers = {
