@@ -1,13 +1,13 @@
 import axios from 'axios';
 import chalk from 'chalk';
-import create_api_url from '../helpers/create_api_url.js';
-import { verify_auth_token, get_less_token } from '../helpers/credentials.js';
+import { verify_auth_token, get_less_token } from './helpers/credentials.js';
+import config from '../utils/config.js';
 import Table from 'cli-table3';
 
 export default async function get_all(organization_id) {
     await verify_auth_token();
 
-    const apiUrl = create_api_url(organization_id, 'projects');
+    const apiUrl = `${config.LESS_API_BASE_URL}/v1/users/me`;
 
     try {
         const LESS_TOKEN = await get_less_token();
@@ -21,10 +21,8 @@ export default async function get_all(organization_id) {
             
             // Prepare the table headers
             const headers = [
-                "Project Name", 
-                "Created", 
-                "Updated", 
-                "Status"
+                "Name",
+                "Email",
             ].map(title => chalk.bold.greenBright(title)); // Set header colors
     
             const table = new Table({ 
@@ -32,22 +30,19 @@ export default async function get_all(organization_id) {
             });
 
             // Set table colors for each item
-            table.push(
-                ...response.data.data
-                    .map(item => ([
-                        item.id,
-                        item.created_at,
-                        item.updated_at,
-                        item.status
-                    ]
-                    .map(item => chalk.cyanBright(item)) // Set item colors
-                ))
+            const user = response.data;
+            table.push([
+                    user.name,
+                    user.email
+                ]
+                .map(item => chalk.cyanBright(item)) // Set item colors)
             );
 
             console.log(table.toString());
         }
     } catch (error) {
         console.error(chalk.redBright('Error:'), error?.response?.data?.error || 'Get projects failed');
+        console.error(chalk.redBright('Error:'), error);
         process.exitCode = 1;
     }
 }

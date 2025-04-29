@@ -30,6 +30,8 @@ import run_app from '../commands/local/run_app/index.js';
 import build from '../commands/local/build/index.js';
 import delete_local_project from '../commands/local/delete/index.js';
 import list_local_projects from '../commands/local/list_projects/index.js';
+import list_organizations from '../commands/list_organizations.js';
+import view_user_profile from '../commands/view_user_profile.js';
 
 const program = new Command();
 
@@ -69,6 +71,16 @@ In order to deploy your project navigate to the correct directory and try again.
         await check_for_updates();
         process.exit(process.exitCode);
     });
+
+    program
+        .command('me')
+        .description('View the user profile for the logged in user.')
+        .action(view_user_profile);
+
+    program
+        .command('list-organizations')
+        .description('List all organizations that you are a part of.')
+        .action(list_organizations);
 
 program
     .command('deploy <project_name>')
