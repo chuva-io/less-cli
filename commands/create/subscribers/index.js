@@ -1,9 +1,10 @@
 import { 
   inquire_unanswered_questions, 
   create_file,
-  create_folder,
   language_file_names
 } from '../../helpers/index.js';
+
+import { topic as topic_templates } from '../../../utils/templates.js';
 
 const questions = [
   {
@@ -34,7 +35,7 @@ const questions = [
     type: 'list',
     name: 'language',
     message: "Enter the programming language to use for the code.",
-    choices: ['js', 'py']
+    choices: ['js', 'ts', 'py']
   }
 ]
 
@@ -68,5 +69,6 @@ const py_subscriber_template = `def process(message):
 
 const subscriber_templates = {
   js: js_subscriber_template,
+  ts: topic_templates.load_topic_subscriber_ts(),
   py: py_subscriber_template
 };
