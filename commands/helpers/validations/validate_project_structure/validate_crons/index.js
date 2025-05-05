@@ -35,7 +35,7 @@ export default (project_less_path) => {
       ))
     ) {
       throw new ResourceHandlerNotFoundException(
-        `Cron "${cron}" doesn't have a handler file named "index.js" or "__init__.py".`
+        `Cron "${cron}" doesn't have a handler file named "index.js", "index.ts", or "__init__.py".`
       );
     }
   });

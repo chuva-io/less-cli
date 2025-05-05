@@ -88,7 +88,7 @@ ${validate_resource_instance_name.regexConstrainMessage}`
 
         if (!processor_handler.length) {
           throw new ResourceHandlerNotFoundException(
-            `Processor "${processor}" from external topic "${topic}" located at "less/external_topics/${external_topics_project_placeholder}, doesn't have a handler file named "index.js" or "__init__.py".`
+            `Processor "${processor}" from external topic "${topic}" located at "less/external_topics/${external_topics_project_placeholder}, doesn't have a handler file named "index.js", "index.ts", or "__init__.py".`
           );
         }
       })

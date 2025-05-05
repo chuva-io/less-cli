@@ -60,7 +60,7 @@ export default (project_less_path) => {
 
       if (!processor_handler.length) {
         throw new ResourceHandlerNotFoundException(
-          `Processor "${processor}" from topic "${topic}", doesn't have a handler file named "index.js" or "__init__.py".`
+          `Processor "${processor}" from topic "${topic}", doesn't have a handler file named "index.js", "index.ts", or "__init__.py".`
         );
       }
     })

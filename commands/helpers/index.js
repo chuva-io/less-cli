@@ -42,6 +42,7 @@ const create_folder = (folder_path) => {
 
 const language_file_names = {
   js: 'index.js',
+  ts: 'index.ts',
   py: '__init__.py'
 };
 

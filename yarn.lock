@@ -29,6 +29,11 @@
     wrap-ansi "^8.1.0"
     wrap-ansi-cjs "npm:wrap-ansi@^7.0.0"
 
+"@less-ifc/types@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@less-ifc/types/-/types-0.0.2.tgz#c09c6f1a55ee6c72639b805a52a2a9df086385e3"
+  integrity sha512-Pe2AtUX9ntpqlZmhAill8+aVUbF2G9JqeTEs/zGokB18D/iZrvZ7grtl9v4S1x5kEVFPE/b5NNOZrIBkf+r52g==
+
 "@npmcli/fs@^1.0.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@npmcli/fs/-/fs-1.1.1.tgz#72f719fe935e687c56a4faecf3c03d06ba593257"

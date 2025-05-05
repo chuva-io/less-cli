@@ -43,6 +43,8 @@ const packagePath = path.join(__dirname, '..', 'package.json');
 const packageContent = JSON.parse(fs.readFileSync(packagePath).toString());
 const version = packageContent?.version;
 
+const LANGUAGE_OPTIONS = ['js', 'ts', 'py'];
+
 // Setting the name and description of the CLI tool
 program
     .name('less-cli')
@@ -208,7 +210,7 @@ create
     .option('-p, --path <path>', 'Required: The HTTP route path to create. (E.g. "/orders/{order_id}")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for the code.')
-            .choices(['js', 'py'])
+            .choices(LANGUAGE_OPTIONS)
     )
     .addOption(
         new Option('-v, --verb <verb>', 'Required: The HTTP verb to use for the route.')
@@ -223,7 +225,7 @@ create
     .option('-n, --name <name>', 'Required: The name of the Web Socket to create or to add channels to. (E.g. "--name realtime_chat")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for the code.')
-            .choices(['js', 'py'])
+            .choices(LANGUAGE_OPTIONS)
     )
     .option('-c, --channels <channels...>', 'A list of channels to create, allowing clients to send messages to the server. (E.g. "--channels public_chatroom private_chatroom")')
     .action(create_socket);
@@ -235,7 +237,7 @@ create
     .option('-n, --name <name>', 'Required: The name of the Topic to create or to add Subscribers to. (E.g. "--name user_created")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for the code.')
-            .choices(['js', 'py'])
+            .choices(LANGUAGE_OPTIONS)
     )
     .option('-s, --subscribers <subscribers...>', 'A list of Subscribers to create for a Topic. (E.g. "--subscribers send_welcome_email send_to_analytics")')
     .option('-ex, --external-topic <external-name>', 'The name of the external service to connect to. Use this option to create subscribers to external services. (E.g. "--external-name iot_sensor_stream_service")')
@@ -249,7 +251,7 @@ create
     .option('-t, --topic <topic>', 'Required: The name of the Topic to create or subscribe to. (E.g. "--name user_created")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for each subscriber\'s code.')
-            .choices(['js', 'py'])
+            .choices(LANGUAGE_OPTIONS)
     )
     .option('-ex, --external-topic <external-name>', 'The name of the external service to subscribe to. Use this option to create subscribers to external services. (E.g. "--external-name iot_sensor_stream_service")')
     .action(create_subscribers);
@@ -261,7 +263,7 @@ create
     .option('-n, --name <name>', 'Required: Enter The name of the CRON Job to create. (E.g. "--name generate_report")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for the code.')
-            .choices(['js', 'py'])
+            .choices(LANGUAGE_OPTIONS)
     )
     .action(create_cron);
 
@@ -272,7 +274,7 @@ create
     .option('-n, --name <name>', 'Required: The name of the Module to create. (E.g. "--name orm_models")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for the code.')
-            .choices(['js', 'py'])
+            .choices(LANGUAGE_OPTIONS)
     )
     .action(create_shared_module);
 
@@ -283,7 +285,7 @@ create
     .option('-n, --name <name>', 'Required: The name of the Cloud Function to create. (E.g. "--name add_numbers")')
     .addOption(
         new Option('-l, --language <language>', 'Required: The programming language to use for the code.')
-            .choices(['js', 'py'])
+            .choices(LANGUAGE_OPTIONS)
     )
     .action(create_cloud_function);
 

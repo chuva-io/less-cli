@@ -37,7 +37,7 @@ export default (project_less_path) => {
       ))
     ) {
       throw new ResourceHandlerNotFoundException(
-        `Cloud function "${cloud_function}" doesn't have a handler file named "index.js" or "__init__.py".`
+        `Cloud function "${cloud_function}" doesn't have a handler file named "index.js", "index.ts", or "__init__.py".`
       );
     }
   });

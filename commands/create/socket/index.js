@@ -4,6 +4,8 @@ import {
   language_file_names
 } from '../../helpers/index.js';
 
+import { socket as socket_templates } from '../../../utils/templates.js';
+
 const questions = [
   {
     type: 'input',
@@ -21,7 +23,7 @@ const questions = [
     type: 'list',
     name: 'language',
     message: "Enter the programming language to use for the code.",
-    choices: ['js', 'py']
+    choices: ['js', 'ts', 'py']
   }
 ]
 
@@ -71,11 +73,13 @@ const py_disconnect_template = `def process(data):
 
 const connect_templates = {
   js: js_connect_template,
+  ts: socket_templates.load_connect_ts(),
   py: py_connect_template
 };
 
 const disconnect_templates = {
   js: js_disconnect_template,
+  ts: socket_templates.load_disconnect_ts(),
   py: py_disconnect_template
 };
 
@@ -92,5 +96,6 @@ const py_channel_template = `def process(input_data):
 
 const channel_templates = {
   js: js_channel_template,
+  ts: socket_templates.load_channel_ts(),
   py: py_channel_template
 };

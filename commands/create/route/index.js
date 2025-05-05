@@ -3,6 +3,8 @@ import {
   create_file 
 } from '../../helpers/index.js';
 
+import { api as api_templates } from '../../../utils/templates.js';
+
 const questions = [
   {
     type: 'input',
@@ -24,7 +26,7 @@ const questions = [
     type: 'list',
     name: 'language',
     message: "Enter the programming language to use for the code.",
-    choices: ['js', 'py']
+    choices: ['js', 'ts', 'py']
   },
   {
     type: 'list',
@@ -38,7 +40,14 @@ export default async (options) => {
   const answers = await inquire_unanswered_questions(options, questions);
   const folder_path = `less/apis/${answers.name}${answers.path}`;
   const file_name = `${answers.verb}.${answers.language}`;
-  const file_content = templates[answers.language];
+
+  const template_map = {
+    js: js_template,
+    ts: api_templates.load_route_ts(),
+    py: py_template
+  };
+
+  const file_content = template_map[answers.language];
   create_file(folder_path, file_name, file_content);
 };
 
@@ -52,8 +61,3 @@ const py_template = `def process(request, response):
   response['body'] = 'Hello, world.'
   return response
 `;
-
-const templates = {
-  js: js_template,
-  py: py_template
-};

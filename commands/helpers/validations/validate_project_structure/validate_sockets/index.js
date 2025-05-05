@@ -65,7 +65,7 @@ export default (project_less_path) => {
 
       if (!channel_handler.length) {
         throw new ResourceHandlerNotFoundException(
-          `The ${connections_handlers.includes(channel) ? `${channel} handler`: `channel "${channel}"`} from socket "${socket}", doesn't have a handler file named "index.js" or "__init__.py".`
+          `The ${connections_handlers.includes(channel) ? `${channel} handler`: `channel "${channel}"`} from socket "${socket}", doesn't have a handler file named "index.js", "index.ts", or "__init__.py".`
         );
       }
     })
